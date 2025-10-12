@@ -24,7 +24,7 @@ export const products = [
     category: 'Graphics Cards',
     theme: 'fire',
     rating: 4.9,
-    image: '/assets/gpu-inferno-rtx.png',
+    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=60',
     description: 'Ray‑traced fury with liquid flames. Built for 8K domination.',
     specs: {
       vram: '24GB GDDR6X',
