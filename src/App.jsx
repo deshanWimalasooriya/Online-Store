@@ -10,9 +10,12 @@ import Contact from './pages/Contact'
 import Profile from './pages/Profile'
 import Admin from './pages/Admin'
 
+import Background from './components/Background'
+
 export default function App() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative">
+      <Background />
       <Header />
       <div className="flex-1">
         <Routes>
