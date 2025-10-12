@@ -18,6 +18,50 @@ export default function Home() {
   const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))]
   const filteredProducts = selectedCategory === 'All' ? products : products.filter(p => p.category === selectedCategory)
 
+  // Feature filters state
+  const [priceMin, setPriceMin] = useState(0)
+  const [priceMax, setPriceMax] = useState(2000)
+  const [selectedBrands, setSelectedBrands] = useState([])
+  const [vramFilter, setVramFilter] = useState('Any')
+  const [coresFilter, setCoresFilter] = useState('Any')
+
+  // derive available brands for the selected category
+  const availableBrands = Array.from(new Set(filteredProducts.map(p=>p.brand).filter(Boolean)))
+  const availableVram = Array.from(new Set(filteredProducts.map(p=>{
+    if (!p.specs?.vram) return null
+    const m = p.specs.vram.match(/(\d+)GB/)
+    return m ? `${m[1]}GB` : null
+  }).filter(Boolean))).sort((a,b)=> parseInt(b)-parseInt(a))
+  const availableCores = Array.from(new Set(filteredProducts.map(p=>{
+    if (!p.specs?.cores) return null
+    const m = p.specs.cores.match(/(\d+)/)
+    return m ? `${m[1]} cores` : null
+  }).filter(Boolean)))
+
+  const toggleBrand = (b) => {
+    setSelectedBrands(s => s.includes(b) ? s.filter(x=>x!==b) : [...s, b])
+  }
+
+  const applyFeatureFilters = (items) => {
+    return items.filter(p => {
+      if (p.price < priceMin || p.price > priceMax) return false
+      if (selectedBrands.length && !selectedBrands.includes(p.brand)) return false
+      if (vramFilter !== 'Any' && p.specs?.vram) {
+        const m = p.specs.vram.match(/(\d+)GB/)
+        if (!m) return false
+        if (`${m[1]}GB` !== vramFilter) return false
+      }
+      if (coresFilter !== 'Any' && p.specs?.cores) {
+        const m = p.specs.cores.match(/(\d+)/)
+        if (!m) return false
+        if (`${m[1]} cores` !== coresFilter) return false
+      }
+      return true
+    })
+  }
+
+  const visibleProducts = applyFeatureFilters(filteredProducts)
+
   return (
     <div>
       <section className="relative w-full">
