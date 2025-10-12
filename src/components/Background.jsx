@@ -1,36 +1,51 @@
 export default function Background() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 -z-20 overflow-hidden">
-      {/* subtle animated gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#041026] via-[#071226] to-[#10050a] opacity-80"></div>
+      {/* base gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#041026] via-[#071226] to-[#07050a] opacity-85"></div>
 
-      {/* drifting glowing orbs */}
-      <div className="absolute left-10 top-20 w-72 h-72 rounded-full bg-ice-400/10 blur-3xl animate-orb1" />
-      <div className="absolute right-24 top-40 w-64 h-64 rounded-full bg-fire-500/10 blur-3xl animate-orb2" />
-      <div className="absolute left-1/2 top-10 w-96 h-96 -translate-x-1/2 rounded-full bg-ice-500/6 blur-2xl animate-orb3" />
-
-      {/* tech grid lines svg */}
-      <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none">
+      {/* Circuit board SVG animation */}
+      <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <linearGradient id="g1" x1="0" x2="1">
-            <stop offset="0%" stopColor="#1aa7ff" stopOpacity="0.07" />
-            <stop offset="100%" stopColor="#ff6a14" stopOpacity="0.04" />
-          </linearGradient>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="6" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
         </defs>
-        <rect x="0" y="0" width="100%" height="100%" fill="url(#g1)" />
-        <g stroke="#ffffff20" strokeWidth="1">
-          <line x1="10%" y1="0" x2="10%" y2="100%" className="animate-line-slow" />
-          <line x1="30%" y1="0" x2="30%" y2="100%" className="animate-line-reverse" />
-          <line x1="50%" y1="0" x2="50%" y2="100%" className="animate-line-slow" />
-          <line x1="70%" y1="0" x2="70%" y2="100%" className="animate-line-reverse" />
-          <line x1="90%" y1="0" x2="90%" y2="100%" className="animate-line-slow" />
+
+        {/* subtle grid overlay */}
+        <g opacity="0.03" stroke="#ffffff" strokeWidth="1">
+          <path d="M0 100 H1920" />
+          <path d="M0 220 H1920" />
+          <path d="M0 340 H1920" />
+          <path d="M0 460 H1920" />
+          <path d="M0 580 H1920" />
         </g>
+
+        {/* animated traces */}
+        <g strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" filter="url(#glow)">
+          <path className="trace trace-ice" d="M120 180 H420 v60 H720 v120 H1200" strokeDasharray="1200" strokeDashoffset="1200" />
+          <path className="trace trace-ice" d="M1600 200 h-300 v100 h-200 v60 h-400" strokeDasharray="1000" strokeDashoffset="1000" />
+          <path className="trace trace-fire" d="M300 60 v140 h200 v40 h240 v80 h300" strokeDasharray="1400" strokeDashoffset="1400" />
+          <path className="trace trace-fire" d="M600 800 h-200 v-80 h-160 v-60 h-120" strokeDasharray="800" strokeDashoffset="800" />
+        </g>
+
+        {/* nodes */}
+        <g>
+          <circle className="node node-ice" cx="120" cy="180" r="6" />
+          <circle className="node node-ice" cx="420" cy="180" r="5" />
+          <circle className="node node-fire" cx="720" cy="240" r="6" />
+          <circle className="node node-ice" cx="1200" cy="360" r="5" />
+          <circle className="node node-fire" cx="300" cy="60" r="5" />
+          <circle className="node node-ice" cx="1600" cy="200" r="5" />
+          <circle className="node node-fire" cx="600" cy="800" r="5" />
+        </g>
+
       </svg>
 
-      {/* small animated nodes */}
-      <div className="absolute top-28 left-24 w-2 h-2 rounded-full bg-ice-400 animate-pulse-fast" />
-      <div className="absolute top-52 left-[40%] w-2 h-2 rounded-full bg-fire-400 animate-pulse-slow" />
-      <div className="absolute bottom-24 right-40 w-2 h-2 rounded-full bg-ice-300 animate-pulse-slow" />
     </div>
   )
 }
