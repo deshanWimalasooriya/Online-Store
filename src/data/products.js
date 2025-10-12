@@ -8,7 +8,7 @@ export const products = [
     category: 'Processors',
     theme: 'ice',
     rating: 4.8,
-    image: '/assets/cpu-quantum-x9.png',
+    image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=60',
     description: '9-core next‑gen CPU with AI acceleration and ultra‑low temps.',
     specs: {
       cores: '9 Performance + 4 Efficiency',
