@@ -66,9 +66,10 @@ export default function Background() {
         const p = particles[i]
         ctx.beginPath()
         const md = Math.hypot(p.x - mouse.x, p.y - mouse.y)
-        const glow = Math.max(0, 1 - md / 220)
-        ctx.fillStyle = `rgba(26,167,255,${0.25 + 0.5 * glow})`
-        ctx.arc(p.x, p.y, p.r + glow * 1.8, 0, Math.PI * 2)
+        // slower, subtler glow effect
+        const glow = Math.max(0, 1 - md / 360)
+        ctx.fillStyle = `rgba(26,167,255,${0.18 + 0.45 * glow})`
+        ctx.arc(p.x, p.y, p.r + glow * 1.2, 0, Math.PI * 2)
         ctx.fill()
 
         // move
