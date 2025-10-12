@@ -17,8 +17,8 @@ export default function Home() {
     <div>
       <section className="relative w-full">
         <div className="flex flex-col md:flex-row">
-          {/* Left categories - 20% on md+ */}
-          <aside className="w-full md:w-1/5 p-4">
+          {/* Left categories - 20% on md+ (sticky, doesn't scroll with main content) */}
+          <aside className="w-full md:w-1/5 p-4 md:sticky md:top-[64px] md:h-[calc(100vh-64px)] md:self-start md:overflow-auto">
             <div className="card p-4 h-full">
               <h3 className="font-display text-lg">Categories</h3>
               <div className="mt-4 grid gap-2">
