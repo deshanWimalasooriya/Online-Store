@@ -67,6 +67,8 @@ export default function Admin() {
 
   const removeImageAt = (idx) => setImageList(prev => prev.filter((_,i)=>i!==idx))
 
+  const { addNotification } = useNotifications()
+
   const saveProduct = (e) => {
     e.preventDefault()
     const parsedSpecs = (() => {
@@ -79,11 +81,15 @@ export default function Admin() {
 
     if (editingId) {
       setProducts(ps => ps.map(p => p.id === editingId ? { ...p, name: form.name, brand: form.brand, price: Number(form.price)||0, category: form.category, images: imgs, image: imgs[0]||p.image, description: form.description, specs: parsedSpecs, stock: Number(form.stock)||0 } : p))
+      // notify update
+      addNotification({ title: 'Product updated', message: form.name, url: `/products/${editingId}`, type: 'product' })
     } else {
       const id = form.id ? slugify(form.id) : slugify(form.name || `prod-${Date.now()}`)
       const exists = products.find(p=>p.id===id)
       const newProduct = { id: exists ? `${id}-${Date.now()}` : id, name: form.name, brand: form.brand, price: Number(form.price)||0, category: form.category, images: imgs, image: imgs[0]||'', description: form.description, specs: parsedSpecs, stock: Number(form.stock)||0, rating: 0, theme: 'ice' }
       setProducts(ps => [newProduct, ...ps])
+      // notify add
+      addNotification({ title: 'New product added', message: newProduct.name, url: `/products/${newProduct.id}`, type: 'product' })
     }
 
     setForm(emptyForm)
