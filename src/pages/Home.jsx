@@ -1,10 +1,17 @@
 import { Link } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
 import { products } from '../data/products'
+import ImageSlider from '../components/ImageSlider'
 
 export default function Home() {
   const hotDeals = products.filter(p=>p.theme==='fire').slice(0,4)
   const newTech = products.filter(p=>p.theme==='ice').slice(0,4)
+
+  const sliderImages = [
+    'https://images.unsplash.com/photo-1508873696983-2dfd5898f6b5?auto=format&fit=crop&w=1400&q=60', // cool tech
+    'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1400&q=60', // fire sparks
+    'https://images.unsplash.com/photo-1518779578993-ec3579fee39f?auto=format&fit=crop&w=1400&q=60'  // blended tech
+  ]
 
   return (
     <div>
@@ -24,6 +31,10 @@ export default function Home() {
             <Link to="/products?q=deal" className="btn-secondary">See Hot Deals</Link>
           </div>
         </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 py-10">
+        <ImageSlider images={sliderImages} interval={5000} />
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-10">
