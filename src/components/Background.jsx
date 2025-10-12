@@ -45,8 +45,9 @@ export default function Background() {
             const midx = (p.x + q.x) / 2
             const midy = (p.y + q.y) / 2
             const md = Math.hypot(midx - mouse.x, midy - mouse.y)
-            const proximity = Math.max(0, 1 - md / 250)
-            const alpha = (1 - d / maxConnect) * 0.6 + proximity * 0.6
+            // slower reaction to mouse: use larger falloff
+            const proximity = Math.max(0, 1 - md / 400)
+            const alpha = (1 - d / maxConnect) * 0.5 + proximity * 0.35
             const grad = ctx.createLinearGradient(p.x, p.y, q.x, q.y)
             grad.addColorStop(0, `rgba(26,167,255,${alpha})`)
             grad.addColorStop(1, `rgba(255,106,20,${alpha})`)
