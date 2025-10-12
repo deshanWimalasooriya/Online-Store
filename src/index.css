@@ -46,4 +46,7 @@
 
   @keyframes nodePulseIce { 0% { opacity: 0.15; transform: scale(1); } 50% { opacity: 0.9; transform: scale(1.6); } 100% { opacity: 0.15; transform: scale(1); } }
   @keyframes nodePulseFire { 0% { opacity: 0.15; transform: scale(1); } 50% { opacity: 0.9; transform: scale(1.6); } 100% { opacity: 0.15; transform: scale(1); } }
+
+  /* canvas fallback styling */
+  canvas { display: block; }
 }
