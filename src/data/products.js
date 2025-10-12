@@ -55,7 +55,7 @@ export const products = [
     category: 'Accessories',
     theme: 'fire',
     rating: 4.5,
-    image: '/assets/acc-firepower-psu.png',
+    image: 'https://images.unsplash.com/photo-1587825140708-2a5b8e7196a0?auto=format&fit=crop&w=800&q=60',
     description: '80+ Gold, fully modular PSU with flame‑proof protections.',
     specs: {
       certification: '80+ Gold',
