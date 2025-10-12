@@ -79,13 +79,13 @@ export default function Background() {
         if (p.y < -10) p.y = h + 10
         if (p.y > h + 10) p.y = -10
 
-        // respond to mouse
+        // respond to mouse (gentle attraction)
         const dx = mouse.x - p.x
         const dy = mouse.y - p.y
         const mdist = Math.sqrt(dx*dx + dy*dy)
-        if (mdist < 120) {
-          p.vx += dx * 0.0008
-          p.vy += dy * 0.0008
+        if (mdist < 140) {
+          p.vx += dx * 0.00025
+          p.vy += dy * 0.00025
         }
       }
 
