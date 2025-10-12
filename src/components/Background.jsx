@@ -1,51 +1,121 @@
+import { useEffect, useRef } from 'react'
+
 export default function Background() {
+  const canvasRef = useRef(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+
+    let w = canvas.width = window.innerWidth
+    let h = canvas.height = window.innerHeight
+
+    const particles = []
+    const particleCount = Math.max(50, Math.floor((w * h) / 90000))
+    const maxConnect = 140
+    const mouse = { x: -9999, y: -9999 }
+
+    function rand(min, max) { return Math.random() * (max - min) + min }
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({ x: rand(0, w), y: rand(0, h), vx: rand(-0.4, 0.4), vy: rand(-0.4, 0.4), r: rand(1, 2.5) })
+    }
+
+    function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight }
+
+    function distance(a, b) { const dx = a.x - b.x; const dy = a.y - b.y; return Math.sqrt(dx * dx + dy * dy) }
+
+    let raf
+    function draw() {
+      ctx.clearRect(0, 0, w, h)
+
+      // background tint
+      ctx.fillStyle = 'rgba(6,10,16,0.25)'
+      ctx.fillRect(0,0,w,h)
+
+      // connections
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i]
+        for (let j = i + 1; j < particles.length; j++) {
+          const q = particles[j]
+          const d = distance(p, q)
+          if (d < maxConnect) {
+            const midx = (p.x + q.x) / 2
+            const midy = (p.y + q.y) / 2
+            const md = Math.hypot(midx - mouse.x, midy - mouse.y)
+            const proximity = Math.max(0, 1 - md / 250)
+            const alpha = (1 - d / maxConnect) * 0.6 + proximity * 0.6
+            const grad = ctx.createLinearGradient(p.x, p.y, q.x, q.y)
+            grad.addColorStop(0, `rgba(26,167,255,${alpha})`)
+            grad.addColorStop(1, `rgba(255,106,20,${alpha})`)
+            ctx.strokeStyle = grad
+            ctx.lineWidth = 1
+            ctx.beginPath()
+            ctx.moveTo(p.x, p.y)
+            ctx.lineTo(q.x, q.y)
+            ctx.stroke()
+          }
+        }
+      }
+
+      // nodes
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i]
+        ctx.beginPath()
+        const md = Math.hypot(p.x - mouse.x, p.y - mouse.y)
+        const glow = Math.max(0, 1 - md / 220)
+        ctx.fillStyle = `rgba(26,167,255,${0.25 + 0.5 * glow})`
+        ctx.arc(p.x, p.y, p.r + glow * 1.8, 0, Math.PI * 2)
+        ctx.fill()
+
+        // move
+        p.x += p.vx
+        p.y += p.vy
+        if (p.x < -10) p.x = w + 10
+        if (p.x > w + 10) p.x = -10
+        if (p.y < -10) p.y = h + 10
+        if (p.y > h + 10) p.y = -10
+
+        // respond to mouse
+        const dx = mouse.x - p.x
+        const dy = mouse.y - p.y
+        const mdist = Math.sqrt(dx*dx + dy*dy)
+        if (mdist < 120) {
+          p.vx += dx * 0.0008
+          p.vy += dy * 0.0008
+        }
+      }
+
+      raf = requestAnimationFrame(draw)
+    }
+
+    function onMove(e) {
+      const ev = e.touches ? e.touches[0] : e
+      mouse.x = ev.clientX
+      mouse.y = ev.clientY
+    }
+    function onLeave() { mouse.x = -9999; mouse.y = -9999 }
+
+    window.addEventListener('mousemove', onMove)
+    window.addEventListener('touchmove', onMove)
+    window.addEventListener('mouseout', onLeave)
+    window.addEventListener('resize', resize)
+
+    draw()
+
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('mousemove', onMove)
+      window.removeEventListener('touchmove', onMove)
+      window.removeEventListener('mouseout', onLeave)
+      window.removeEventListener('resize', resize)
+    }
+  }, [])
+
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 -z-20 overflow-hidden">
-      {/* base gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#041026] via-[#071226] to-[#07050a] opacity-85"></div>
-
-      {/* Circuit board SVG animation */}
-      <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="6" result="blur" />
-            <feMerge>
-              <feMergeNode in="blur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
-
-        {/* subtle grid overlay */}
-        <g opacity="0.03" stroke="#ffffff" strokeWidth="1">
-          <path d="M0 100 H1920" />
-          <path d="M0 220 H1920" />
-          <path d="M0 340 H1920" />
-          <path d="M0 460 H1920" />
-          <path d="M0 580 H1920" />
-        </g>
-
-        {/* animated traces */}
-        <g strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" filter="url(#glow)">
-          <path className="trace trace-ice" d="M120 180 H420 v60 H720 v120 H1200" strokeDasharray="1200" strokeDashoffset="1200" />
-          <path className="trace trace-ice" d="M1600 200 h-300 v100 h-200 v60 h-400" strokeDasharray="1000" strokeDashoffset="1000" />
-          <path className="trace trace-fire" d="M300 60 v140 h200 v40 h240 v80 h300" strokeDasharray="1400" strokeDashoffset="1400" />
-          <path className="trace trace-fire" d="M600 800 h-200 v-80 h-160 v-60 h-120" strokeDasharray="800" strokeDashoffset="800" />
-        </g>
-
-        {/* nodes */}
-        <g>
-          <circle className="node node-ice" cx="120" cy="180" r="6" />
-          <circle className="node node-ice" cx="420" cy="180" r="5" />
-          <circle className="node node-fire" cx="720" cy="240" r="6" />
-          <circle className="node node-ice" cx="1200" cy="360" r="5" />
-          <circle className="node node-fire" cx="300" cy="60" r="5" />
-          <circle className="node node-ice" cx="1600" cy="200" r="5" />
-          <circle className="node node-fire" cx="600" cy="800" r="5" />
-        </g>
-
-      </svg>
-
+    <div aria-hidden className="pointer-events-none absolute inset-0 -z-20">
+      <canvas ref={canvasRef} className="w-full h-full block" />
     </div>
   )
 }
