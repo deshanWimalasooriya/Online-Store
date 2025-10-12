@@ -127,7 +127,7 @@ export default function Home() {
             ) : (
               <div>
                 <div className="flex flex-col md:flex-row md:items-start md:gap-4">
-                  <div className="mb-4 md:mb-0 md:w-1/3 card p-4">
+                  <div className="mb-4 md:mb-0 md:w-1/5 card p-4">
                     <h3 className="font-display text-lg mb-2">Filter {selectedCategory}</h3>
 
                     <div className="mb-3">
