@@ -32,4 +32,18 @@
   .animate-line-reverse { animation: lineMove 22s linear reverse infinite; }
   .animate-pulse-fast { animation: pulse 1.4s ease-in-out infinite; }
   .animate-pulse-slow { animation: pulse 2.6s ease-in-out infinite; }
+
+  /* Circuit traces */
+  .trace { stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: 0.9; }
+  .trace-ice { stroke: #1aa7ff; stroke-opacity: 0.9; animation: draw 6s linear forwards; filter: drop-shadow(0 0 8px rgba(26,167,255,0.25)); }
+  .trace-fire { stroke: #ff6a14; stroke-opacity: 0.85; animation: draw 7s linear 0.8s forwards; filter: drop-shadow(0 0 8px rgba(255,106,20,0.18)); }
+
+  @keyframes draw { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
+
+  .node { fill: #ffffff; opacity: 0.02; }
+  .node-ice { fill: #1aa7ff; animation: nodePulseIce 2.8s ease-in-out infinite; filter: drop-shadow(0 0 8px rgba(26,167,255,0.25)); }
+  .node-fire { fill: #ff6a14; animation: nodePulseFire 3.2s ease-in-out infinite; filter: drop-shadow(0 0 8px rgba(255,106,20,0.22)); }
+
+  @keyframes nodePulseIce { 0% { opacity: 0.15; transform: scale(1); } 50% { opacity: 0.9; transform: scale(1.6); } 100% { opacity: 0.15; transform: scale(1); } }
+  @keyframes nodePulseFire { 0% { opacity: 0.15; transform: scale(1); } 50% { opacity: 0.9; transform: scale(1.6); } 100% { opacity: 0.15; transform: scale(1); } }
 }
