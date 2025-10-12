@@ -19,4 +19,17 @@
   input[type='range']::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 9999px; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.4); margin-top: -5px; }
   input[type='range']::-moz-range-track { height: 8px; background: transparent; }
   input[type='range']::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.4); }
+
+  /* Background animations */
+  @keyframes orbFloat1 { 0% { transform: translateY(0) translateX(0) } 50% { transform: translateY(-30px) translateX(10px) } 100% { transform: translateY(0) translateX(0) } }
+  @keyframes orbFloat2 { 0% { transform: translateY(0) translateX(0) } 50% { transform: translateY(20px) translateX(-10px) } 100% { transform: translateY(0) translateX(0) } }
+  @keyframes orbFloat3 { 0% { transform: translateY(0) } 50% { transform: translateY(-50px) } 100% { transform: translateY(0) } }
+  @keyframes lineMove { 0% { transform: translateY(-10%) } 50% { transform: translateY(10%) } 100% { transform: translateY(-10%) } }
+  .animate-orb1 { animation: orbFloat1 12s ease-in-out infinite; }
+  .animate-orb2 { animation: orbFloat2 16s ease-in-out infinite; }
+  .animate-orb3 { animation: orbFloat3 20s ease-in-out infinite; }
+  .animate-line-slow { animation: lineMove 18s linear infinite; }
+  .animate-line-reverse { animation: lineMove 22s linear reverse infinite; }
+  .animate-pulse-fast { animation: pulse 1.4s ease-in-out infinite; }
+  .animate-pulse-slow { animation: pulse 2.6s ease-in-out infinite; }
 }
