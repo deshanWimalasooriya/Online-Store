@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root { height: 100%; }
+  body { @apply bg-charcoal text-white font-sans; }
+}
+
+@layer components {
+  .btn-primary { @apply inline-flex items-center justify-center px-4 py-2 rounded-md bg-ice-500 hover:bg-ice-400 text-black font-semibold shadow-glowIce transition; }
+  .btn-secondary { @apply inline-flex items-center justify-center px-4 py-2 rounded-md bg-fire-500 hover:bg-fire-400 text-white font-semibold shadow-glowFire transition; }
+  .card { @apply bg-[#111727]/80 border border-white/10 rounded-xl backdrop-blur-sm; }
+  .pill { @apply px-3 py-1 rounded-full text-xs font-medium border border-white/10; }
+}
