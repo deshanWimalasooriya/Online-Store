@@ -248,3 +248,5 @@ export const products = [
     }
   }
 ]
+
+export const categories = Array.from(new Set(products.map(p => p.category)))
