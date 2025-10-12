@@ -70,7 +70,7 @@ export const products = [
     category: 'Graphics Cards',
     theme: 'ice',
     rating: 4.7,
-    image: '/assets/gpu-glacier-xt.png',
+    image: 'https://images.unsplash.com/photo-1611078482719-9b2f5c4d1f39?auto=format&fit=crop&w=800&q=60',
     description: 'Silent, sub‑zero graphics with crystal‑clear performance.',
     specs: {
       vram: '16GB GDDR6',
