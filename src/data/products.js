@@ -25,6 +25,11 @@ export const products = [
     theme: 'fire',
     rating: 4.9,
     image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=60',
+    images: [
+      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=60',
+      'https://images.unsplash.com/photo-1587202372775-5c8a6f6a1f8a?auto=format&fit=crop&w=1200&q=60',
+      'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=60'
+    ],
     description: 'Ray‑traced fury with liquid flames. Built for 8K domination.',
     specs: {
       vram: '24GB GDDR6X',
@@ -99,8 +104,6 @@ export const products = [
       tdp: '105W',
     }
   },
-
-  // Additional accessories and categories
   {
     id: 'ram-venom-32gb',
     name: 'Venom 32GB DDR5',

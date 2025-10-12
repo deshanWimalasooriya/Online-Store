@@ -1,14 +1,17 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 
 export default function ProductCard({ product }) {
   const { add } = useCart()
+  const navigate = useNavigate()
   const isIce = product.theme === 'ice'
   const ring = isIce ? 'ring-ice-400 shadow-glowIce' : 'ring-fire-400 shadow-glowFire'
   const btn = isIce ? 'btn-primary' : 'btn-secondary'
 
+  const onCardClick = () => navigate(`/products/${product.id}`)
+
   return (
-    <div className={`card ring-1 ${ring} overflow-hidden`}>
+    <div onClick={onCardClick} className={`card ring-1 ${ring} overflow-hidden cursor-pointer`}>
       <div className="relative aspect-video bg-gradient-to-br from-[#0e162b] to-[#151f3a] flex items-center justify-center overflow-hidden">
         <img src={product.image} alt={product.name} className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute left-3 top-3">
@@ -16,7 +19,7 @@ export default function ProductCard({ product }) {
         </div>
       </div>
       <div className="p-4">
-        <Link to={`/products/${product.id}`} className="block text-lg font-display tracking-wide hover:text-ice-400">{product.name}</Link>
+        <div className="block text-lg font-display tracking-wide hover:text-ice-400">{product.name}</div>
         <div className="mt-1 text-white/70 text-sm line-clamp-2">{product.description}</div>
         <div className="mt-3 flex items-center justify-between">
           <div className="text-xl font-bold">${product.price.toFixed(2)}</div>
@@ -26,8 +29,8 @@ export default function ProductCard({ product }) {
           </div>
         </div>
         <div className="mt-4 flex items-center gap-2">
-          <button className={btn} onClick={()=>add(product)}>Add to Cart</button>
-          <Link className="pill text-white/80 hover:text-white" to={`/products/${product.id}`}>Details</Link>
+          <button className={btn} onClick={(e)=>{ e.stopPropagation(); add(product) }}>Add to Cart</button>
+          <Link className="pill text-white/80 hover:text-white" to={`/products/${product.id}`} onClick={e=>e.stopPropagation()}>Details</Link>
         </div>
       </div>
     </div>
