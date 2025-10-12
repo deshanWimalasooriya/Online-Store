@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { products } from '../data/products'
 import { useCart } from '../context/CartContext'
 
@@ -15,7 +16,7 @@ export default function ProductDetail() {
     <div className="mx-auto max-w-5xl px-4 py-10">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className={`card aspect-video flex items-center justify-center ring-1 ${isIce?'ring-ice-400 shadow-glowIce':'ring-fire-400 shadow-glowFire'}`}>
-          <span className="text-white/60">Image Placeholder</span>
+          <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
         </div>
         <div>
           <h1 className="font-display text-3xl">{product.name}</h1>
