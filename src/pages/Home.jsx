@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
 import { products } from '../data/products'
