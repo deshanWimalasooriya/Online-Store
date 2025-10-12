@@ -149,8 +149,8 @@ export default function Home() {
                               const v = Math.min(Number(e.target.value), priceMax - 1)
                               setPriceMin(v)
                             }}
-                            className="absolute left-0 w-full h-8 appearance-none bg-transparent pointer-events-none"
-                            style={{ WebkitAppearance: 'none' }}
+                            className="absolute left-0 w-full h-8 appearance-none bg-transparent"
+                            style={{ WebkitAppearance: 'none', zIndex: 20 }}
                           />
                           <input
                             type="range"
@@ -161,8 +161,8 @@ export default function Home() {
                               const v = Math.max(Number(e.target.value), priceMin + 1)
                               setPriceMax(v)
                             }}
-                            className="absolute left-0 w-full h-8 appearance-none bg-transparent pointer-events-none"
-                            style={{ WebkitAppearance: 'none' }}
+                            className="absolute left-0 w-full h-8 appearance-none bg-transparent"
+                            style={{ WebkitAppearance: 'none', zIndex: 10 }}
                           />
                           {/* visible thumbs for accessibility */}
                           <div className="absolute top-0 left-0 w-full h-8 flex items-center justify-between pointer-events-none px-2">
