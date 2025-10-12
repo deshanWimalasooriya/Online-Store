@@ -27,7 +27,7 @@ export default function App() {
           <Route path="/admin" element={<Admin />} />
         </Routes>
       </div>
-      <footer className="border-t border-white/10 py-6 text-center text-white/60">© {new Date().getFullYear()} IceFire Tech</footer>
+      <footer className="border-t border-white/10 py-6 text-center text-white/60">© {new Date().getFullYear()} CircuitChic</footer>
     </div>
   )
 }
