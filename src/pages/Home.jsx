@@ -29,7 +29,7 @@ export default function Home() {
             </div>
           </aside>
 
-          {/* Right main slider - 80% on md+ */}
+          {/* Right main slider + product lists - 80% on md+ */}
           <div className="w-full md:w-4/5 p-4">
             <div className="relative">
               <ImageSlider images={sliderImages} interval={5000} />
@@ -49,21 +49,24 @@ export default function Home() {
               </div>
               <div className="absolute inset-0 -z-10 bg-gradient-to-br from-ice-500/10 via-transparent to-fire-500/10"></div>
             </div>
+
+            {/* Product sections placed inside the right column so they scroll together */}
+            <div className="mt-8">
+              <section>
+                <h2 className="font-display text-2xl">Hot Deals</h2>
+                <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {hotDeals.map(p=> <ProductCard key={p.id} product={p} />)}
+                </div>
+              </section>
+
+              <section className="mt-10">
+                <h2 className="font-display text-2xl">New Tech</h2>
+                <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {newTech.map(p=> <ProductCard key={p.id} product={p} />)}
+                </div>
+              </section>
+            </div>
           </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 py-10">
-        <h2 className="font-display text-2xl">Hot Deals</h2>
-        <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {hotDeals.map(p=> <ProductCard key={p.id} product={p} />)}
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 py-10">
-        <h2 className="font-display text-2xl">New Tech</h2>
-        <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {newTech.map(p=> <ProductCard key={p.id} product={p} />)}
         </div>
       </section>
     </div>
