@@ -4,9 +4,13 @@ import { useCart } from '../context/CartContext'
 
 function Logo() {
   return (
-    <Link to="/" className="flex items-center gap-2">
-      <span className="inline-flex h-8 w-8 rounded-md bg-gradient-to-br from-ice-400 to-fire-500 shadow-glowIce"></span>
-      <span className="font-display text-xl tracking-wider">IceFire Tech</span>
+    <Link to="/" className="flex items-center gap-3">
+      <svg className="h-8 w-8 text-ice-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+        <rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" strokeWidth="1.5" />
+        <rect x="8" y="8" width="8" height="8" rx="1" fill="currentColor" opacity="0.12" />
+        <path d="M2 10h3M2 14h3M19 10h3M19 14h3M10 2v3M14 2v3M10 19v3M14 19v3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      <span className="font-display text-xl tracking-wider">CircuitChic</span>
     </Link>
   )
 }
