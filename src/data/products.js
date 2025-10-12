@@ -40,7 +40,7 @@ export const products = [
     category: 'Cooling Systems',
     theme: 'ice',
     rating: 4.6,
-    image: '/assets/cool-cryoflux-360.png',
+    image: 'https://images.unsplash.com/photo-1581091870626-3d6c15c5b7f4?auto=format&fit=crop&w=800&q=60',
     description: 'Triple‑fan liquid cooling with nanofin cold plate for extreme stability.',
     specs: {
       radiator: '360mm',
