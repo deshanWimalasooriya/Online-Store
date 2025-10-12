@@ -4,6 +4,7 @@ export const products = [
   {
     id: 'cpu-quantum-x9',
     name: 'Quantum X9 Processor',
+    brand: 'CryoTech',
     price: 599.99,
     category: 'Processors',
     theme: 'ice',
@@ -20,6 +21,7 @@ export const products = [
   {
     id: 'gpu-inferno-rtx',
     name: 'Inferno RTX Blaze',
+    brand: 'PyroCore',
     price: 1199.00,
     category: 'Graphics Cards',
     theme: 'fire',
@@ -36,6 +38,7 @@ export const products = [
   {
     id: 'cool-cryoflux-360',
     name: 'CryoFlux 360 AIO',
+    brand: 'ArcticFlow',
     price: 179.99,
     category: 'Cooling Systems',
     theme: 'ice',
@@ -51,6 +54,7 @@ export const products = [
   {
     id: 'acc-firepower-psu',
     name: 'FirePower 850W PSU',
+    brand: 'VoltForge',
     price: 139.50,
     category: 'Accessories',
     theme: 'fire',
@@ -61,11 +65,13 @@ export const products = [
       certification: '80+ Gold',
       modular: 'Fully Modular',
       protections: 'OVP/UVP/OPP/SCP',
+      wattage: '850W'
     }
   },
   {
     id: 'gpu-glacier-xt',
     name: 'Glacier XT 16G',
+    brand: 'GlacierWorks',
     price: 749.00,
     category: 'Graphics Cards',
     theme: 'ice',
@@ -81,6 +87,7 @@ export const products = [
   {
     id: 'cpu-dragonfire-z7',
     name: 'DragonFire Z7',
+    brand: 'DragonWorks',
     price: 429.99,
     category: 'Processors',
     theme: 'fire',
