@@ -127,9 +127,63 @@ export default function Home() {
               </>
             ) : (
               <div>
-                <h2 className="font-display text-2xl">{selectedCategory}</h2>
-                <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredProducts.map(p => <ProductCard key={p.id} product={p} />)}
+                <div className="flex flex-col md:flex-row md:items-start md:gap-4">
+                  <div className="mb-4 md:mb-0 md:w-1/3 card p-4">
+                    <h3 className="font-display text-lg mb-2">Filter {selectedCategory}</h3>
+
+                    <div className="mb-3">
+                      <label className="text-sm text-white/70">Price range</label>
+                      <div className="flex items-center gap-2 mt-2">
+                        <input type="number" value={priceMin} onChange={e=>setPriceMin(Number(e.target.value))} className="w-1/2 rounded-md border border-white/10 bg-[#111727] px-2 py-1 text-sm" />
+                        <input type="number" value={priceMax} onChange={e=>setPriceMax(Number(e.target.value))} className="w-1/2 rounded-md border border-white/10 bg-[#111727] px-2 py-1 text-sm" />
+                      </div>
+                    </div>
+
+                    {availableBrands.length > 0 && (
+                      <div className="mb-3">
+                        <label className="text-sm text-white/70">Brand</label>
+                        <div className="mt-2 grid gap-2">
+                          {availableBrands.map(b => (
+                            <label key={b} className="inline-flex items-center gap-2 text-sm">
+                              <input type="checkbox" checked={selectedBrands.includes(b)} onChange={()=>toggleBrand(b)} />
+                              <span>{b}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {selectedCategory === 'Graphics Cards' && availableVram.length > 0 && (
+                      <div className="mb-3">
+                        <label className="text-sm text-white/70">VRAM</label>
+                        <select value={vramFilter} onChange={e=>setVramFilter(e.target.value)} className="mt-2 w-full rounded-md border border-white/10 bg-[#111727] px-2 py-1 text-sm">
+                          <option>Any</option>
+                          {availableVram.map(v => <option key={v} value={v}>{v}</option>)}
+                        </select>
+                      </div>
+                    )}
+
+                    {selectedCategory === 'Processors' && availableCores.length > 0 && (
+                      <div className="mb-3">
+                        <label className="text-sm text-white/70">Cores</label>
+                        <select value={coresFilter} onChange={e=>setCoresFilter(e.target.value)} className="mt-2 w-full rounded-md border border-white/10 bg-[#111727] px-2 py-1 text-sm">
+                          <option>Any</option>
+                          {availableCores.map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                      </div>
+                    )}
+
+                    <div className="mt-3 flex gap-2">
+                      <button onClick={()=>{ setPriceMin(0); setPriceMax(2000); setSelectedBrands([]); setVramFilter('Any'); setCoresFilter('Any') }} className="pill">Reset</button>
+                    </div>
+                  </div>
+
+                  <div className="flex-1">
+                    <h2 className="font-display text-2xl mb-4">{selectedCategory}</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {visibleProducts.map(p => <ProductCard key={p.id} product={p} />)}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
