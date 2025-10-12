@@ -1,4 +1,5 @@
-import { useRef } from 'react'
+import React, { useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
@@ -6,6 +7,7 @@ import jsPDF from 'jspdf'
 export default function Cart() {
   const { items, inc, dec, remove, total } = useCart()
   const ref = useRef(null)
+  const navigate = useNavigate()
 
   const downloadPDF = async () => {
     const el = ref.current
@@ -22,7 +24,7 @@ export default function Cart() {
     pdf.setFillColor('#0b0f1a')
     pdf.rect(0,0,pageWidth,pageHeight,'F')
     pdf.setFontSize(18)
-    pdf.text('Quotation — IceFire Tech', 30, y)
+    pdf.text('Quotation — CircuitChic', 30, y)
     y += 10
     pdf.addImage(imgData, 'PNG', 30, y, imgWidth, Math.min(imgHeight, pageHeight - y - 30))
     pdf.save('quotation.pdf')
@@ -57,6 +59,7 @@ export default function Cart() {
           </div>
           <div className="mt-6 flex items-center gap-3">
             <button className="btn-secondary" onClick={downloadPDF}>Download Quotation (PDF)</button>
+            <button className="btn-primary" onClick={()=>navigate('/checkout')}>Proceed to Checkout</button>
           </div>
         </div>
       )}
