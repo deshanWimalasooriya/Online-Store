@@ -85,7 +85,7 @@ export const products = [
     category: 'Processors',
     theme: 'fire',
     rating: 4.4,
-    image: '/assets/cpu-dragonfire-z7.png',
+    image: 'https://images.unsplash.com/photo-1581091870624-9f0a6b5e3c9b?auto=format&fit=crop&w=800&q=60',
     description: 'Blazing performance tuned for creators and competitive gamers.',
     specs: {
       cores: '8 Performance + 4 Efficiency',
