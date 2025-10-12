@@ -17,7 +17,7 @@ export default function Admin() {
       const raw = localStorage.getItem('admin_products')
       if (raw) return JSON.parse(raw)
     } catch(e){}
-    return seedProducts.map(p => ({ ...p, stock: p.stock ?? 10 }))
+    return seedProducts.map(p => ({ ...p, stock: p.stock ?? 10, images: p.images || (p.image ? [p.image] : []) }))
   })
 
   useEffect(()=>{ localStorage.setItem('admin_products', JSON.stringify(products)) },[products])
@@ -41,23 +41,41 @@ export default function Admin() {
   useEffect(()=>{ localStorage.setItem('admin_users', JSON.stringify(users)) },[users])
 
   // Product form (for add/edit)
-  const emptyForm = { id: '', name: '', brand: '', price: 0, category: '', images: '', description: '', specs: '', stock: 0 }
+  const emptyForm = { id: '', name: '', brand: '', price: 0, category: '', imagesText: '', description: '', specs: '', stock: 0 }
   const [form, setForm] = useState(emptyForm)
+  const [imageList, setImageList] = useState([]) // array of image URLs or dataURLs
   const [editingId, setEditingId] = useState(null)
 
-  const startAdd = () => { setForm(emptyForm); setEditingId(null); setTab('products') }
+  const startAdd = () => { setForm(emptyForm); setEditingId(null); setImageList([]); setTab('products') }
   const startEdit = (p) => {
-    setForm({ id: p.id, name: p.name, brand: p.brand||'', price: p.price||0, category: p.category||'', images: (p.images || [p.image]).join(','), description: p.description||'', specs: JSON.stringify(p.specs||{}), stock: p.stock||0 })
+    setForm({ id: p.id, name: p.name, brand: p.brand||'', price: p.price||0, category: p.category||'', imagesText: (p.images || p.image ? (p.images || [p.image]).join(',') : ''), description: p.description||'', specs: JSON.stringify(p.specs||{}), stock: p.stock||0 })
+    setImageList(p.images ? [...p.images] : (p.image ? [p.image] : []))
     setEditingId(p.id)
     setTab('products')
   }
+
+  const handleFiles = async (files) => {
+    const arr = Array.from(files || [])
+    const readers = arr.map(file => new Promise((res)=>{
+      const fr = new FileReader()
+      fr.onload = () => res(fr.result)
+      fr.readAsDataURL(file)
+    }))
+    const results = await Promise.all(readers)
+    setImageList(prev => [...prev, ...results])
+  }
+
+  const removeImageAt = (idx) => setImageList(prev => prev.filter((_,i)=>i!==idx))
 
   const saveProduct = (e) => {
     e.preventDefault()
     const parsedSpecs = (() => {
       try { return JSON.parse(form.specs) } catch(e){ return {} }
     })()
-    const imgs = form.images.split(',').map(s=>s.trim()).filter(Boolean)
+
+    // combine images from text input and uploaded images, prefer uploaded images first
+    const textImgs = (form.imagesText || '').split(',').map(s=>s.trim()).filter(Boolean)
+    const imgs = [...imageList, ...textImgs]
 
     if (editingId) {
       setProducts(ps => ps.map(p => p.id === editingId ? { ...p, name: form.name, brand: form.brand, price: Number(form.price)||0, category: form.category, images: imgs, image: imgs[0]||p.image, description: form.description, specs: parsedSpecs, stock: Number(form.stock)||0 } : p))
@@ -69,6 +87,7 @@ export default function Admin() {
     }
 
     setForm(emptyForm)
+    setImageList([])
     setEditingId(null)
   }
 
@@ -100,7 +119,6 @@ export default function Admin() {
     const totalOrders = orders.length
     const totalProducts = products.length
     const profitEstimate = revenue * 0.2
-    // simple timeseries from orders by date (group by YYYY-MM)
     const byMonth = {}
     orders.forEach(o=>{
       const key = o.date ? o.date.slice(0,7) : new Date().toISOString().slice(0,7)
@@ -244,10 +262,38 @@ export default function Admin() {
                     <label className="text-sm text-white/70">Category</label>
                     <input value={form.category} onChange={e=>setForm(f=>({...f, category: e.target.value}))} className="mt-1 w-full rounded-md border border-white/10 bg-[#111727] px-3 py-2" />
                   </div>
+
                   <div>
-                    <label className="text-sm text-white/70">Images (comma separated URLs)</label>
-                    <input value={form.images} onChange={e=>setForm(f=>({...f, images: e.target.value}))} className="mt-1 w-full rounded-md border border-white/10 bg-[#111727] px-3 py-2" />
+                    <label className="text-sm text-white/70">Upload Images (or provide URLs below)</label>
+                    <input type="file" multiple accept="image/*" onChange={e=>handleFiles(e.target.files)} className="mt-1 w-full text-sm text-white/80" />
                   </div>
+
+                  <div>
+                    <label className="text-sm text-white/70">Image URLs (comma separated)</label>
+                    <input value={form.imagesText} onChange={e=>setForm(f=>({...f, imagesText: e.target.value}))} placeholder="https://... , https://..." className="mt-1 w-full rounded-md border border-white/10 bg-[#111727] px-3 py-2" />
+                    <div className="mt-2 flex gap-2 overflow-auto">
+                      {(imageList.length === 0 && (!form.imagesText || form.imagesText.trim()==='')) ? (
+                        <div className="text-white/60 text-sm">No images selected</div>
+                      ) : (
+                        // render previews from combined list
+                        [...imageList, ...((form.imagesText||'').split(',').map(s=>s.trim()).filter(Boolean))].map((src,i)=> (
+                          <div key={i} className="relative w-20 h-14 bg-[#061223] rounded overflow-hidden border border-white/5">
+                            <img src={src} alt={`img-${i}`} className="w-full h-full object-cover" />
+                            <button type="button" onClick={()=>{
+                              // remove from uploaded images if index within imageList, else remove from text urls
+                              if (i < imageList.length) removeImageAt(i)
+                              else {
+                                const t = (form.imagesText||'').split(',').map(s=>s.trim()).filter(Boolean)
+                                t.splice(i - imageList.length, 1)
+                                setForm(f=>({...f, imagesText: t.join(',')}))
+                              }
+                            }} className="absolute -top-2 -right-2 w-6 h-6 bg-fire-500 text-white rounded-full text-xs">×</button>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+
                   <div>
                     <label className="text-sm text-white/70">Stock</label>
                     <input type="number" value={form.stock} onChange={e=>setForm(f=>({...f, stock: e.target.value}))} className="mt-1 w-full rounded-md border border-white/10 bg-[#111727] px-3 py-2" />
@@ -258,7 +304,7 @@ export default function Admin() {
                   </div>
                   <div className="flex gap-2">
                     <button type="submit" className="btn-primary">Save</button>
-                    <button type="button" className="pill" onClick={()=>{ setForm(emptyForm); setEditingId(null) }}>Cancel</button>
+                    <button type="button" className="pill" onClick={()=>{ setForm(emptyForm); setEditingId(null); setImageList([]) }}>Cancel</button>
                   </div>
                 </form>
               </div>
