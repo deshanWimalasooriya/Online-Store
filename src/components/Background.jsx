@@ -19,7 +19,8 @@ export default function Background() {
     function rand(min, max) { return Math.random() * (max - min) + min }
 
     for (let i = 0; i < particleCount; i++) {
-      particles.push({ x: rand(0, w), y: rand(0, h), vx: rand(-0.4, 0.4), vy: rand(-0.4, 0.4), r: rand(1, 2.5) })
+      // smaller initial velocities for slower motion
+      particles.push({ x: rand(0, w), y: rand(0, h), vx: rand(-0.12, 0.12), vy: rand(-0.12, 0.12), r: rand(1, 2.5) })
     }
 
     function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight }
