@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 
 export default function ProductCard({ product }) {
@@ -8,9 +9,12 @@ export default function ProductCard({ product }) {
   const btn = isIce ? 'btn-primary' : 'btn-secondary'
 
   return (
-    <div className={`card ring-1 ${ring} overflow-hidden`}> 
-      <div className="aspect-video bg-gradient-to-br from-[#0e162b] to-[#151f3a] flex items-center justify-center">
-        <span className={`pill ${isIce ? 'border-ice-400 text-ice-300' : 'border-fire-400 text-fire-300'}`}>{product.category}</span>
+    <div className={`card ring-1 ${ring} overflow-hidden`}>
+      <div className="relative aspect-video bg-gradient-to-br from-[#0e162b] to-[#151f3a] flex items-center justify-center overflow-hidden">
+        <img src={product.image} alt={product.name} className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute left-3 top-3">
+          <span className={`pill ${isIce ? 'border-ice-400 text-ice-300' : 'border-fire-400 text-fire-300'}`}>{product.category}</span>
+        </div>
       </div>
       <div className="p-4">
         <Link to={`/products/${product.id}`} className="block text-lg font-display tracking-wide hover:text-ice-400">{product.name}</Link>
