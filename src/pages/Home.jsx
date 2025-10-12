@@ -132,9 +132,55 @@ export default function Home() {
 
                     <div className="mb-3">
                       <label className="text-sm text-white/70">Price range</label>
-                      <div className="flex items-center gap-2 mt-2">
-                        <input type="number" value={priceMin} onChange={e=>setPriceMin(Number(e.target.value))} className="w-1/2 rounded-md border border-white/10 bg-[#111727] px-2 py-1 text-sm" />
-                        <input type="number" value={priceMax} onChange={e=>setPriceMax(Number(e.target.value))} className="w-1/2 rounded-md border border-white/10 bg-[#111727] px-2 py-1 text-sm" />
+                      <div className="mt-3">
+                        <div className="relative h-8">
+                          <div className="absolute inset-0 flex items-center">
+                            <div className="w-full h-2 bg-white/10 rounded-full relative">
+                              <div className="absolute h-2 bg-ice-400 rounded-full" style={{ left: `${(priceMin/2000)*100}%`, width: `${((priceMax-priceMin)/2000)*100}%` }} />
+                            </div>
+                          </div>
+                          {/* range inputs */}
+                          <input
+                            type="range"
+                            min={0}
+                            max={2000}
+                            value={priceMin}
+                            onChange={e => {
+                              const v = Math.min(Number(e.target.value), priceMax - 1)
+                              setPriceMin(v)
+                            }}
+                            className="absolute left-0 w-full h-8 appearance-none bg-transparent pointer-events-none"
+                            style={{ WebkitAppearance: 'none' }}
+                          />
+                          <input
+                            type="range"
+                            min={0}
+                            max={2000}
+                            value={priceMax}
+                            onChange={e => {
+                              const v = Math.max(Number(e.target.value), priceMin + 1)
+                              setPriceMax(v)
+                            }}
+                            className="absolute left-0 w-full h-8 appearance-none bg-transparent pointer-events-none"
+                            style={{ WebkitAppearance: 'none' }}
+                          />
+                          {/* visible thumbs for accessibility */}
+                          <div className="absolute top-0 left-0 w-full h-8 flex items-center justify-between pointer-events-none px-2">
+                            <div className="w-4 h-4 rounded-full bg-white/90 shadow" style={{ transform: `translateX(${(priceMin/2000)*100}%)` }} />
+                            <div className="w-4 h-4 rounded-full bg-white/90 shadow" style={{ transform: `translateX(${(priceMax/2000)*100}%)` }} />
+                          </div>
+                        </div>
+
+                        <div className="mt-3 flex items-center gap-2">
+                          <input type="number" value={priceMin} onChange={e=>{
+                            const v = Math.min(Number(e.target.value)||0, priceMax - 1)
+                            setPriceMin(v)
+                          }} className="w-1/2 rounded-md border border-white/10 bg-[#111727] px-2 py-1 text-sm" />
+                          <input type="number" value={priceMax} onChange={e=>{
+                            const v = Math.max(Number(e.target.value)||2000, priceMin + 1)
+                            setPriceMax(v)
+                          }} className="w-1/2 rounded-md border border-white/10 bg-[#111727] px-2 py-1 text-sm" />
+                        </div>
                       </div>
                     </div>
 
