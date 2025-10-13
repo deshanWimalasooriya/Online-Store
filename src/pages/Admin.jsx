@@ -195,6 +195,14 @@ export default function Admin() {
     setCategories(cs=>cs.filter(x=>x!==c))
   }
 
+  // Helper to ensure order.items is always an array
+  const normalizeOrderItems = (o) => {
+    const it = o && o.items
+    if (Array.isArray(it)) return it
+    if (it) return [it]
+    return []
+  }
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 grid grid-cols-1 lg:grid-cols-4 gap-6">
       <aside className="card p-4 lg:col-span-1">
