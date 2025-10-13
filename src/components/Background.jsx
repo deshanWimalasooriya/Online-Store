@@ -7,33 +7,43 @@ export default function Background() {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
+    if (!ctx) return
 
-    let w = canvas.width = window.innerWidth
-    let h = canvas.height = window.innerHeight
+    let w = (canvas.width = window.innerWidth)
+    let h = (canvas.height = window.innerHeight)
 
     const particles = []
     const particleCount = Math.max(50, Math.floor((w * h) / 90000))
     const maxConnect = 140
     const mouse = { x: -9999, y: -9999 }
 
-    function rand(min, max) { return Math.random() * (max - min) + min }
+    function rand(min, max) {
+      return Math.random() * (max - min) + min
+    }
 
     for (let i = 0; i < particleCount; i++) {
       // smaller initial velocities for slower motion
       particles.push({ x: rand(0, w), y: rand(0, h), vx: rand(-0.12, 0.12), vy: rand(-0.12, 0.12), r: rand(1, 2.5) })
     }
 
-    function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight }
+    function resize() {
+      w = canvas.width = window.innerWidth
+      h = canvas.height = window.innerHeight
+    }
 
-    function distance(a, b) { const dx = a.x - b.x; const dy = a.y - b.y; return Math.sqrt(dx * dx + dy * dy) }
+    function distance(a, b) {
+      const dx = a.x - b.x
+      const dy = a.y - b.y
+      return Math.sqrt(dx * dx + dy * dy)
+    }
 
-    let raf
+    let raf = 0
     function draw() {
       ctx.clearRect(0, 0, w, h)
 
       // background tint
       ctx.fillStyle = 'rgba(6,10,16,0.25)'
-      ctx.fillRect(0,0,w,h)
+      ctx.fillRect(0, 0, w, h)
 
       // connections
       for (let i = 0; i < particles.length; i++) {
@@ -83,7 +93,7 @@ export default function Background() {
         // respond to mouse (gentle attraction)
         const dx = mouse.x - p.x
         const dy = mouse.y - p.y
-        const mdist = Math.sqrt(dx*dx + dy*dy)
+        const mdist = Math.sqrt(dx * dx + dy * dy)
         if (mdist < 140) {
           p.vx += dx * 0.00025
           p.vy += dy * 0.00025
@@ -98,7 +108,10 @@ export default function Background() {
       mouse.x = ev.clientX
       mouse.y = ev.clientY
     }
-    function onLeave() { mouse.x = -9999; mouse.y = -9999 }
+    function onLeave() {
+      mouse.x = -9999
+      mouse.y = -9999
+    }
 
     window.addEventListener('mousemove', onMove)
     window.addEventListener('touchmove', onMove)
@@ -108,7 +121,7 @@ export default function Background() {
     draw()
 
     return () => {
-      cancelAnimationFrame(raf)
+      if (raf) cancelAnimationFrame(raf)
       window.removeEventListener('mousemove', onMove)
       window.removeEventListener('touchmove', onMove)
       window.removeEventListener('mouseout', onLeave)
