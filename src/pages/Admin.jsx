@@ -220,21 +220,82 @@ export default function Admin() {
 
       <main className="lg:col-span-3 space-y-6">
         {tab==='overview' && (
-          <section className="card p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4">
-              <div className="text-sm text-white/70">Revenue</div>
-              <div className="text-2xl font-bold">${metrics.revenue.toFixed(2)}</div>
-              <div className="text-sm text-white/60 mt-1">Estimated profit ${metrics.profitEstimate.toFixed(2)}</div>
+          <section className="card p-4">
+            {/* Top KPI row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="p-4">
+                <div className="text-sm text-white/70">Total Sales</div>
+                <div className="text-2xl font-bold">${metrics.revenue.toFixed(2)}</div>
+                <div className="text-sm text-white/60 mt-1">Estimated profit ${metrics.profitEstimate.toFixed(2)}</div>
+              </div>
+
+              <div className="p-4">
+                <div className="text-sm text-white/70">Total Orders</div>
+                <div className="text-2xl font-bold">{metrics.totalOrders}</div>
+                <div className="text-sm text-white/60 mt-1">Products: {metrics.totalProducts}</div>
+              </div>
+
+              <div className="p-4">
+                <div className="text-sm text-white/70">Total Visitors</div>
+                <div className="text-2xl font-bold">{totalVisitors.toLocaleString()}</div>
+                <div className="text-sm text-white/60 mt-1">Visitors (est)</div>
+              </div>
+
+              <div className="p-4">
+                <div className="text-sm text-white/70">Active Users</div>
+                <div className="text-2xl font-bold">{activeUsers}</div>
+                <div className="text-sm text-white/60 mt-1">Users active this month</div>
+              </div>
             </div>
-            <div className="p-4">
-              <div className="text-sm text-white/70">Orders</div>
-              <div className="text-2xl font-bold">{metrics.totalOrders}</div>
-              <div className="text-sm text-white/60 mt-1">Products: {metrics.totalProducts}</div>
-            </div>
-            <div className="p-4">
-              <div className="text-sm text-white/70">Sales (by month)</div>
-              <div className="mt-2">
-                <MiniBarChart series={metrics.series} />
+
+            {/* Main overview grid: Revenue, Orders breakdown, Sales chart */}
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4">
+                <div className="text-sm text-white/70">Revenue</div>
+                <div className="text-2xl font-bold">${metrics.revenue.toFixed(2)}</div>
+                <div className="text-sm text-white/60 mt-1">Estimated profit ${metrics.profitEstimate.toFixed(2)}</div>
+                <div className="mt-3">
+                  <MiniBarChart series={metrics.series} />
+                </div>
+              </div>
+
+              <div className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-sm text-white/70">Orders</div>
+                    <div className="text-2xl font-bold">{metrics.totalOrders}</div>
+                    <div className="text-sm text-white/60 mt-1">Products sold: {Object.values(categoryBreakdown).reduce((s,c)=>s+(c.qty||0),0)}</div>
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <h4 className="text-sm text-white/70 mb-2">Top Categories</h4>
+                  <div className="space-y-2">
+                    {topCategories.slice(0,5).map(tc=> (
+                      <div key={tc.category} className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-3 h-3 rounded-full" style={{ background: tc.color }} />
+                          <div className="text-sm">{tc.category}</div>
+                        </div>
+                        <div className="text-sm text-white/60">{tc.total.toFixed(2)}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4">
+                <div className="text-sm text-white/70">Sales (by month)</div>
+                <div className="mt-2">
+                  <MiniBarChart series={metrics.series} />
+                </div>
+
+                <div className="mt-4">
+                  <h4 className="text-sm text-white/70">Active users by country</h4>
+                  <div className="mt-2 text-sm text-white/60">United States: {Math.round(activeUsers*0.42)} users</div>
+                  <div className="text-sm text-white/60">United Kingdom: {Math.round(activeUsers*0.24)} users</div>
+                  <div className="text-sm text-white/60">Indonesia: {Math.round(activeUsers*0.175)} users</div>
+                </div>
               </div>
             </div>
           </section>
