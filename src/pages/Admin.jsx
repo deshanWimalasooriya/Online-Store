@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { products as seedProducts } from '../data/products'
 import { useUser } from '../context/UserContext'
+import { useNotifications } from '../context/NotificationContext'
 
 function slugify(s){
   return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')
@@ -22,6 +23,13 @@ export default function Admin() {
 
   useEffect(()=>{ localStorage.setItem('admin_products', JSON.stringify(products)) },[products])
 
+  // Categories (persisted in localStorage). Start from products if none saved.
+  const [categories, setCategories] = useState(()=>{
+    try { const raw = localStorage.getItem('admin_categories'); if (raw) return JSON.parse(raw) } catch(e){}
+    return Array.from(new Set(products.map(p=>p.category).filter(Boolean)))
+  })
+  useEffect(()=>{ localStorage.setItem('admin_categories', JSON.stringify(categories)) },[categories])
+
   // Orders state (client-only). Seed from user context orders
   const [orders, setOrders] = useState(()=>{
     try {
@@ -29,7 +37,7 @@ export default function Admin() {
       if (raw) return JSON.parse(raw)
     } catch(e){}
     // normalize userOrders into a simple shape if present
-    return userOrders.map(o => ({ id: o.id, date: o.date, total: o.total, items: o.items || [], status: 'pending' }))
+    return userOrders.map(o => ({ id: o.id, date: o.date, total: o.total, items: Array.isArray(o.items) ? o.items : [], status: 'pending' }))
   })
   useEffect(()=>{ localStorage.setItem('admin_orders', JSON.stringify(orders)) },[orders])
 
@@ -134,6 +142,97 @@ export default function Admin() {
     return { revenue, totalOrders, totalProducts, profitEstimate, series }
   },[orders, products])
 
+  // UI state for product/category and order filters
+  const [productFilter, setProductFilter] = useState('All')
+  const [newCategory, setNewCategory] = useState('')
+  const [orderTimeframe, setOrderTimeframe] = useState('monthly')
+  const [orderCategory, setOrderCategory] = useState('All')
+
+  const displayedProducts = products.filter(p => productFilter==='All' || p.category===productFilter)
+
+  const ordersByPeriod = useMemo(()=>{
+    const res = {}
+    const keyFor = (dateStr)=>{
+      const d = new Date(dateStr)
+      if (orderTimeframe==='daily') return d.toISOString().slice(0,10)
+      if (orderTimeframe==='monthly') return d.toISOString().slice(0,7)
+      return d.getFullYear().toString()
+    }
+    orders.forEach(o=>{
+      const k = keyFor(o.date || o.created || new Date().toISOString())
+      res[k] = res[k] || { count:0, total:0 }
+      res[k].count += 1
+      res[k].total += Number(o.total||0)
+    })
+    return res
+  },[orders, orderTimeframe])
+
+  const categoryBreakdown = useMemo(()=>{
+    const map = {}
+    orders.forEach(o=>{
+      const itemsArr = Array.isArray(o?.items) ? o.items : (o?.items ? [o.items] : [])
+      itemsArr.forEach(it=>{
+        const prod = products.find(p=>p.id===it.id)
+        const cat = prod ? prod.category : 'Unknown'
+        if (orderCategory!=='All' && cat!==orderCategory) return
+        map[cat] = map[cat] || { qty:0, total:0 }
+        map[cat].qty += Number(it.qty||0)
+        map[cat].total += Number(it.price||0) * Number(it.qty||0)
+      })
+    })
+    return map
+  },[orders, products, orderCategory])
+
+  const addCategory = ()=>{
+    const c = (newCategory||'').trim()
+    if (!c) return
+    if (!categories.includes(c)) setCategories(cs=>[...cs, c])
+    setNewCategory('')
+  }
+
+  const removeCategory = (c)=>{
+    if (!confirm(`Delete category "${c}"? This will not delete products.`)) return
+    setCategories(cs=>cs.filter(x=>x!==c))
+  }
+
+  // Helper to ensure order.items is always an array
+  const normalizeOrderItems = (o) => {
+    const it = o && o.items
+    if (Array.isArray(it)) return it
+    if (it) return [it]
+    return []
+  }
+
+  // Visitors & active users (frontend-only estimates persisted in localStorage)
+  const totalVisitors = useMemo(()=>{
+    try {
+      const raw = localStorage.getItem('admin_visitors')
+      if (raw) {
+        const parsed = JSON.parse(raw)
+        if (typeof parsed === 'number') return parsed
+        if (parsed && typeof parsed.total === 'number') return parsed.total
+      }
+    } catch(e){}
+    const est = orders.length * 50 + products.length * 20 + users.length * 10
+    try { localStorage.setItem('admin_visitors', JSON.stringify({ total: est })) } catch(e){}
+    return est
+  },[orders, products, users])
+
+  const activeUsers = useMemo(()=>{
+    try {
+      const raw = localStorage.getItem('admin_active_users')
+      if (raw) { const v = JSON.parse(raw); if (typeof v === 'number') return v }
+    } catch(e){}
+    const val = Math.max(users.length, Math.round(totalVisitors * 0.03))
+    try { localStorage.setItem('admin_active_users', JSON.stringify(val)) } catch(e){}
+    return val
+  },[users, totalVisitors])
+
+  const topCategories = useMemo(()=>{
+    const palette = ['#ff6a14','#1aa7ff','#f59e0b','#34d399','#a78bfa']
+    return Object.entries(categoryBreakdown).map(([category, data], i)=>({ category, qty: data.qty||0, total: data.total||0, color: palette[i % palette.length] })).sort((a,b)=>b.total - a.total)
+  },[categoryBreakdown])
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 grid grid-cols-1 lg:grid-cols-4 gap-6">
       <aside className="card p-4 lg:col-span-1">
@@ -151,21 +250,82 @@ export default function Admin() {
 
       <main className="lg:col-span-3 space-y-6">
         {tab==='overview' && (
-          <section className="card p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4">
-              <div className="text-sm text-white/70">Revenue</div>
-              <div className="text-2xl font-bold">${metrics.revenue.toFixed(2)}</div>
-              <div className="text-sm text-white/60 mt-1">Estimated profit ${metrics.profitEstimate.toFixed(2)}</div>
+          <section className="card p-4">
+            {/* Top KPI row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="p-4">
+                <div className="text-sm text-white/70">Total Sales</div>
+                <div className="text-2xl font-bold">${metrics.revenue.toFixed(2)}</div>
+                <div className="text-sm text-white/60 mt-1">Estimated profit ${metrics.profitEstimate.toFixed(2)}</div>
+              </div>
+
+              <div className="p-4">
+                <div className="text-sm text-white/70">Total Orders</div>
+                <div className="text-2xl font-bold">{metrics.totalOrders}</div>
+                <div className="text-sm text-white/60 mt-1">Products: {metrics.totalProducts}</div>
+              </div>
+
+              <div className="p-4">
+                <div className="text-sm text-white/70">Total Visitors</div>
+                <div className="text-2xl font-bold">{totalVisitors.toLocaleString()}</div>
+                <div className="text-sm text-white/60 mt-1">Visitors (est)</div>
+              </div>
+
+              <div className="p-4">
+                <div className="text-sm text-white/70">Active Users</div>
+                <div className="text-2xl font-bold">{activeUsers}</div>
+                <div className="text-sm text-white/60 mt-1">Users active this month</div>
+              </div>
             </div>
-            <div className="p-4">
-              <div className="text-sm text-white/70">Orders</div>
-              <div className="text-2xl font-bold">{metrics.totalOrders}</div>
-              <div className="text-sm text-white/60 mt-1">Products: {metrics.totalProducts}</div>
-            </div>
-            <div className="p-4">
-              <div className="text-sm text-white/70">Sales (by month)</div>
-              <div className="mt-2">
-                <MiniBarChart series={metrics.series} />
+
+            {/* Main overview grid: Revenue, Orders breakdown, Sales chart */}
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4">
+                <div className="text-sm text-white/70">Revenue</div>
+                <div className="text-2xl font-bold">${metrics.revenue.toFixed(2)}</div>
+                <div className="text-sm text-white/60 mt-1">Estimated profit ${metrics.profitEstimate.toFixed(2)}</div>
+                <div className="mt-3">
+                  <MiniBarChart series={metrics.series} />
+                </div>
+              </div>
+
+              <div className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-sm text-white/70">Orders</div>
+                    <div className="text-2xl font-bold">{metrics.totalOrders}</div>
+                    <div className="text-sm text-white/60 mt-1">Products sold: {Object.values(categoryBreakdown).reduce((s,c)=>s+(c.qty||0),0)}</div>
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <h4 className="text-sm text-white/70 mb-2">Top Categories</h4>
+                  <div className="space-y-2">
+                    {topCategories.slice(0,5).map(tc=> (
+                      <div key={tc.category} className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-3 h-3 rounded-full" style={{ background: tc.color }} />
+                          <div className="text-sm">{tc.category}</div>
+                        </div>
+                        <div className="text-sm text-white/60">{tc.total.toFixed(2)}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-4">
+                <div className="text-sm text-white/70">Sales (by month)</div>
+                <div className="mt-2">
+                  <MiniBarChart series={metrics.series} />
+                </div>
+
+                <div className="mt-4">
+                  <h4 className="text-sm text-white/70">Active users by country</h4>
+                  <div className="mt-2 text-sm text-white/60">United States: {Math.round(activeUsers*0.42)} users</div>
+                  <div className="text-sm text-white/60">United Kingdom: {Math.round(activeUsers*0.24)} users</div>
+                  <div className="text-sm text-white/60">Indonesia: {Math.round(activeUsers*0.175)} users</div>
+                </div>
               </div>
             </div>
           </section>
@@ -176,13 +336,37 @@ export default function Admin() {
             <h3 className="font-display text-lg">Order Management</h3>
             <p className="text-white/70 mt-1">View, update, and fulfill orders.</p>
             <div className="mt-4 space-y-3">
+              <div className="flex items-center gap-3">
+                <label className="text-sm text-white/70">Timeframe</label>
+                <select value={orderTimeframe} onChange={e=>setOrderTimeframe(e.target.value)} className="rounded-md bg-[#111727] border border-white/10 px-2 py-1">
+                  <option value="daily">Daily</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="yearly">Yearly</option>
+                </select>
+                <label className="text-sm text-white/70 ml-4">Category</label>
+                <select value={orderCategory} onChange={e=>setOrderCategory(e.target.value)} className="rounded-md bg-[#111727] border border-white/10 px-2 py-1">
+                  <option value="All">All</option>
+                  {categories.map(c=> <option key={c} value={c}>{c}</option>)}
+                </select>
+                <div className="ml-auto text-sm text-white/70">Periods: {Object.keys(ordersByPeriod).length}</div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {Object.entries(ordersByPeriod).slice(0,6).map(([k,v])=> (
+                  <div key={k} className="p-3 border rounded-md">
+                    <div className="text-sm text-white/60">{k}</div>
+                    <div className="font-medium">{v.count} orders</div>
+                    <div className="text-sm text-white/60">${v.total.toFixed(2)}</div>
+                  </div>
+                ))}
+              </div>
               {orders.length===0 ? <div className="text-white/70">No orders yet.</div> : orders.map(o=> (
                 <div key={o.id} className="p-3 border rounded-md flex items-start justify-between">
                   <div>
                     <div className="font-medium">{o.id} <span className="text-sm text-white/60">{o.date}</span></div>
                     <div className="text-sm text-white/60">Total: ${Number(o.total||0).toFixed(2)}</div>
                     <div className="mt-2 text-sm">
-                      {o.items && o.items.length>0 ? o.items.map(it=> <div key={it.id}>{it.qty}× {it.name} — ${it.price}</div>) : <div className="text-white/60">No item details</div>}
+                      {normalizeOrderItems(o).length>0 ? normalizeOrderItems(o).map(it=> <div key={it.id}>{it.qty}× {it.name} — ${it.price}</div>) : <div className="text-white/60">No item details</div>}
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
@@ -212,6 +396,20 @@ export default function Admin() {
 
             <div className="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
               <div className="lg:col-span-2">
+                <div className="mb-3 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <label className="text-sm text-white/70">Filter</label>
+                    <select value={productFilter} onChange={e=>setProductFilter(e.target.value)} className="rounded-md bg-[#111727] border border-white/10 px-2 py-1">
+                      <option value="All">All</option>
+                      {categories.map(c=> <option key={c} value={c}>{c}</option>)}
+                    </select>
+                    <button className="pill" onClick={()=>{ setTab('products'); setForm(emptyForm); setEditingId(null); setImageList([]) }}>Add Product</button>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input placeholder="New category" value={newCategory} onChange={e=>setNewCategory(e.target.value)} className="rounded-md border border-white/10 bg-[#111727] px-2 py-1 text-sm" />
+                    <button type="button" onClick={addCategory} className="pill">Add Category</button>
+                  </div>
+                </div>
                 <div className="overflow-auto">
                   <table className="w-full text-left text-sm">
                     <thead>
@@ -224,7 +422,7 @@ export default function Admin() {
                       </tr>
                     </thead>
                     <tbody>
-                      {products.map(p=> (
+                      {displayedProducts.map(p=> (
                         <tr key={p.id} className="border-t border-white/5">
                           <td className="py-3">
                             <div className="flex items-center gap-3">
@@ -266,7 +464,10 @@ export default function Admin() {
                   </div>
                   <div>
                     <label className="text-sm text-white/70">Category</label>
-                    <input value={form.category} onChange={e=>setForm(f=>({...f, category: e.target.value}))} className="mt-1 w-full rounded-md border border-white/10 bg-[#111727] px-3 py-2" />
+                    <select value={form.category} onChange={e=>setForm(f=>({...f, category: e.target.value}))} className="mt-1 w-full rounded-md border border-white/10 bg-[#111727] px-3 py-2">
+                      <option value="">Select category</option>
+                      {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
                   </div>
 
                   <div>
