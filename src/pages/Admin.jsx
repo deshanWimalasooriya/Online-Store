@@ -23,6 +23,13 @@ export default function Admin() {
 
   useEffect(()=>{ localStorage.setItem('admin_products', JSON.stringify(products)) },[products])
 
+  // Categories (persisted in localStorage). Start from products if none saved.
+  const [categories, setCategories] = useState(()=>{
+    try { const raw = localStorage.getItem('admin_categories'); if (raw) return JSON.parse(raw) } catch(e){}
+    return Array.from(new Set(products.map(p=>p.category).filter(Boolean)))
+  })
+  useEffect(()=>{ localStorage.setItem('admin_categories', JSON.stringify(categories)) },[categories])
+
   // Orders state (client-only). Seed from user context orders
   const [orders, setOrders] = useState(()=>{
     try {
