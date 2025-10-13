@@ -220,6 +220,20 @@ export default function Admin() {
 
             <div className="mt-4 grid grid-cols-1 lg:grid-cols-3 gap-4">
               <div className="lg:col-span-2">
+                <div className="mb-3 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <label className="text-sm text-white/70">Filter</label>
+                    <select value={productFilter} onChange={e=>setProductFilter(e.target.value)} className="rounded-md bg-[#111727] border border-white/10 px-2 py-1">
+                      <option value="All">All</option>
+                      {categories.map(c=> <option key={c} value={c}>{c}</option>)}
+                    </select>
+                    <button className="pill" onClick={()=>{ setTab('products'); setForm(emptyForm); setEditingId(null); setImageList([]) }}>Add Product</button>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input placeholder="New category" value={newCategory} onChange={e=>setNewCategory(e.target.value)} className="rounded-md border border-white/10 bg-[#111727] px-2 py-1 text-sm" />
+                    <button type="button" onClick={addCategory} className="pill">Add Category</button>
+                  </div>
+                </div>
                 <div className="overflow-auto">
                   <table className="w-full text-left text-sm">
                     <thead>
