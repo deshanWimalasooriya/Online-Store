@@ -275,7 +275,7 @@ export default function Admin() {
                     <div className="font-medium">{o.id} <span className="text-sm text-white/60">{o.date}</span></div>
                     <div className="text-sm text-white/60">Total: ${Number(o.total||0).toFixed(2)}</div>
                     <div className="mt-2 text-sm">
-                      {o.items && o.items.length>0 ? o.items.map(it=> <div key={it.id}>{it.qty}× {it.name} — ${it.price}</div>) : <div className="text-white/60">No item details</div>}
+                      {normalizeOrderItems(o).length>0 ? normalizeOrderItems(o).map(it=> <div key={it.id}>{it.qty}× {it.name} — ${it.price}</div>) : <div className="text-white/60">No item details</div>}
                     </div>
                   </div>
                   <div className="flex flex-col items-end gap-2">
