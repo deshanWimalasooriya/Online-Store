@@ -274,7 +274,10 @@ export default function Admin() {
                   </div>
                   <div>
                     <label className="text-sm text-white/70">Category</label>
-                    <input value={form.category} onChange={e=>setForm(f=>({...f, category: e.target.value}))} className="mt-1 w-full rounded-md border border-white/10 bg-[#111727] px-3 py-2" />
+                    <select value={form.category} onChange={e=>setForm(f=>({...f, category: e.target.value}))} className="mt-1 w-full rounded-md border border-white/10 bg-[#111727] px-3 py-2">
+                      <option value="">Select category</option>
+                      {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                    </select>
                   </div>
 
                   <div>
