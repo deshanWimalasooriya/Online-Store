@@ -170,7 +170,8 @@ export default function Admin() {
   const categoryBreakdown = useMemo(()=>{
     const map = {}
     orders.forEach(o=>{
-      (o.items||[]).forEach(it=>{
+      const itemsArr = Array.isArray(o?.items) ? o.items : (o?.items ? [o.items] : [])
+      itemsArr.forEach(it=>{
         const prod = products.find(p=>p.id===it.id)
         const cat = prod ? prod.category : 'Unknown'
         if (orderCategory!=='All' && cat!==orderCategory) return
