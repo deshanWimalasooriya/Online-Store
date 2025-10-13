@@ -142,6 +142,58 @@ export default function Admin() {
     return { revenue, totalOrders, totalProducts, profitEstimate, series }
   },[orders, products])
 
+  // UI state for product/category and order filters
+  const [productFilter, setProductFilter] = useState('All')
+  const [newCategory, setNewCategory] = useState('')
+  const [orderTimeframe, setOrderTimeframe] = useState('monthly')
+  const [orderCategory, setOrderCategory] = useState('All')
+
+  const displayedProducts = products.filter(p => productFilter==='All' || p.category===productFilter)
+
+  const ordersByPeriod = useMemo(()=>{
+    const res = {}
+    const keyFor = (dateStr)=>{
+      const d = new Date(dateStr)
+      if (orderTimeframe==='daily') return d.toISOString().slice(0,10)
+      if (orderTimeframe==='monthly') return d.toISOString().slice(0,7)
+      return d.getFullYear().toString()
+    }
+    orders.forEach(o=>{
+      const k = keyFor(o.date || o.created || new Date().toISOString())
+      res[k] = res[k] || { count:0, total:0 }
+      res[k].count += 1
+      res[k].total += Number(o.total||0)
+    })
+    return res
+  },[orders, orderTimeframe])
+
+  const categoryBreakdown = useMemo(()=>{
+    const map = {}
+    orders.forEach(o=>{
+      (o.items||[]).forEach(it=>{
+        const prod = products.find(p=>p.id===it.id)
+        const cat = prod ? prod.category : 'Unknown'
+        if (orderCategory!=='All' && cat!==orderCategory) return
+        map[cat] = map[cat] || { qty:0, total:0 }
+        map[cat].qty += Number(it.qty||0)
+        map[cat].total += Number(it.price||0) * Number(it.qty||0)
+      })
+    })
+    return map
+  },[orders, products, orderCategory])
+
+  const addCategory = ()=>{
+    const c = (newCategory||'').trim()
+    if (!c) return
+    if (!categories.includes(c)) setCategories(cs=>[...cs, c])
+    setNewCategory('')
+  }
+
+  const removeCategory = (c)=>{
+    if (!confirm(`Delete category "${c}"? This will not delete products.`)) return
+    setCategories(cs=>cs.filter(x=>x!==c))
+  }
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 grid grid-cols-1 lg:grid-cols-4 gap-6">
       <aside className="card p-4 lg:col-span-1">
