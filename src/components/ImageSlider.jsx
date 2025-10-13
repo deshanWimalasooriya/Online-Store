@@ -9,7 +9,9 @@ export default function ImageSlider({ images = [], interval = 5000 }) {
     timerRef.current = setInterval(() => {
       setIndex(i => (i + 1) % images.length)
     }, interval)
-    return () => clearInterval(timerRef.current)
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current)
+    }
   }, [images, interval])
 
   const prev = () => {
