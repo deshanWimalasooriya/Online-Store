@@ -203,6 +203,36 @@ export default function Admin() {
     return []
   }
 
+  // Visitors & active users (frontend-only estimates persisted in localStorage)
+  const totalVisitors = useMemo(()=>{
+    try {
+      const raw = localStorage.getItem('admin_visitors')
+      if (raw) {
+        const parsed = JSON.parse(raw)
+        if (typeof parsed === 'number') return parsed
+        if (parsed && typeof parsed.total === 'number') return parsed.total
+      }
+    } catch(e){}
+    const est = orders.length * 50 + products.length * 20 + users.length * 10
+    try { localStorage.setItem('admin_visitors', JSON.stringify({ total: est })) } catch(e){}
+    return est
+  },[orders, products, users])
+
+  const activeUsers = useMemo(()=>{
+    try {
+      const raw = localStorage.getItem('admin_active_users')
+      if (raw) { const v = JSON.parse(raw); if (typeof v === 'number') return v }
+    } catch(e){}
+    const val = Math.max(users.length, Math.round(totalVisitors * 0.03))
+    try { localStorage.setItem('admin_active_users', JSON.stringify(val)) } catch(e){}
+    return val
+  },[users, totalVisitors])
+
+  const topCategories = useMemo(()=>{
+    const palette = ['#ff6a14','#1aa7ff','#f59e0b','#34d399','#a78bfa']
+    return Object.entries(categoryBreakdown).map(([category, data], i)=>({ category, qty: data.qty||0, total: data.total||0, color: palette[i % palette.length] })).sort((a,b)=>b.total - a.total)
+  },[categoryBreakdown])
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 grid grid-cols-1 lg:grid-cols-4 gap-6">
       <aside className="card p-4 lg:col-span-1">
