@@ -246,7 +246,7 @@ export default function Admin() {
                       </tr>
                     </thead>
                     <tbody>
-                      {products.map(p=> (
+                      {displayedProducts.map(p=> (
                         <tr key={p.id} className="border-t border-white/5">
                           <td className="py-3">
                             <div className="flex items-center gap-3">
