@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root { height: 100%; }
+  body { @apply bg-charcoal text-white font-sans; }
+}
+
+@layer components {
+  .btn-primary { @apply inline-flex items-center justify-center px-4 py-2 rounded-md bg-ice-500 hover:bg-ice-400 text-black font-semibold shadow-glowIce transition; }
+  .btn-secondary { @apply inline-flex items-center justify-center px-4 py-2 rounded-md bg-fire-500 hover:bg-fire-400 text-white font-semibold shadow-glowFire transition; }
+  .card { @apply bg-[#111727]/80 border border-white/10 rounded-xl backdrop-blur-sm; }
+  .pill { @apply px-3 py-1 rounded-full text-xs font-medium border border-white/10; }
+
+  /* Range input styling */
+  input[type='range'] { -webkit-appearance: none; appearance: none; }
+  input[type='range']::-webkit-slider-runnable-track { height: 8px; background: transparent; }
+  input[type='range']::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 9999px; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.4); margin-top: -5px; }
+  input[type='range']::-moz-range-track { height: 8px; background: transparent; }
+  input[type='range']::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.4); }
+
+  /* Background animations */
+  @keyframes orbFloat1 { 0% { transform: translateY(0) translateX(0) } 50% { transform: translateY(-30px) translateX(10px) } 100% { transform: translateY(0) translateX(0) } }
+  @keyframes orbFloat2 { 0% { transform: translateY(0) translateX(0) } 50% { transform: translateY(20px) translateX(-10px) } 100% { transform: translateY(0) translateX(0) } }
+  @keyframes orbFloat3 { 0% { transform: translateY(0) } 50% { transform: translateY(-50px) } 100% { transform: translateY(0) } }
+  @keyframes lineMove { 0% { transform: translateY(-10%) } 50% { transform: translateY(10%) } 100% { transform: translateY(-10%) } }
+  .animate-orb1 { animation: orbFloat1 12s ease-in-out infinite; }
+  .animate-orb2 { animation: orbFloat2 16s ease-in-out infinite; }
+  .animate-orb3 { animation: orbFloat3 20s ease-in-out infinite; }
+  .animate-line-slow { animation: lineMove 18s linear infinite; }
+  .animate-line-reverse { animation: lineMove 22s linear reverse infinite; }
+  .animate-pulse-fast { animation: pulse 1.4s ease-in-out infinite; }
+  .animate-pulse-slow { animation: pulse 2.6s ease-in-out infinite; }
+
+  /* Circuit traces */
+  .trace { stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; opacity: 0.9; }
+  .trace-ice { stroke: #1aa7ff; stroke-opacity: 0.9; animation: draw 6s linear forwards; filter: drop-shadow(0 0 8px rgba(26,167,255,0.25)); }
+  .trace-fire { stroke: #ff6a14; stroke-opacity: 0.85; animation: draw 7s linear 0.8s forwards; filter: drop-shadow(0 0 8px rgba(255,106,20,0.18)); }
+
+  @keyframes draw { from { stroke-dashoffset: 1000; } to { stroke-dashoffset: 0; } }
+
+  .node { fill: #ffffff; opacity: 0.02; }
+  .node-ice { fill: #1aa7ff; animation: nodePulseIce 2.8s ease-in-out infinite; filter: drop-shadow(0 0 8px rgba(26,167,255,0.25)); }
+  .node-fire { fill: #ff6a14; animation: nodePulseFire 3.2s ease-in-out infinite; filter: drop-shadow(0 0 8px rgba(255,106,20,0.22)); }
+
+  @keyframes nodePulseIce { 0% { opacity: 0.15; transform: scale(1); } 50% { opacity: 0.9; transform: scale(1.6); } 100% { opacity: 0.15; transform: scale(1); } }
+  @keyframes nodePulseFire { 0% { opacity: 0.15; transform: scale(1); } 50% { opacity: 0.9; transform: scale(1.6); } 100% { opacity: 0.15; transform: scale(1); } }
+
+  /* canvas fallback styling */
+  canvas { display: block; }
+}
