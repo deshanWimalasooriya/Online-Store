@@ -37,7 +37,7 @@ export default function Admin() {
       if (raw) return JSON.parse(raw)
     } catch(e){}
     // normalize userOrders into a simple shape if present
-    return userOrders.map(o => ({ id: o.id, date: o.date, total: o.total, items: o.items || [], status: 'pending' }))
+    return userOrders.map(o => ({ id: o.id, date: o.date, total: o.total, items: Array.isArray(o.items) ? o.items : [], status: 'pending' }))
   })
   useEffect(()=>{ localStorage.setItem('admin_orders', JSON.stringify(orders)) },[orders])
 
