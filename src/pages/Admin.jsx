@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { products as seedProducts } from '../data/products'
 import { useUser } from '../context/UserContext'
+import { useNotifications } from '../context/NotificationContext'
 
 function slugify(s){
   return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')
