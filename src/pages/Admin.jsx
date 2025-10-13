@@ -236,6 +236,30 @@ export default function Admin() {
             <h3 className="font-display text-lg">Order Management</h3>
             <p className="text-white/70 mt-1">View, update, and fulfill orders.</p>
             <div className="mt-4 space-y-3">
+              <div className="flex items-center gap-3">
+                <label className="text-sm text-white/70">Timeframe</label>
+                <select value={orderTimeframe} onChange={e=>setOrderTimeframe(e.target.value)} className="rounded-md bg-[#111727] border border-white/10 px-2 py-1">
+                  <option value="daily">Daily</option>
+                  <option value="monthly">Monthly</option>
+                  <option value="yearly">Yearly</option>
+                </select>
+                <label className="text-sm text-white/70 ml-4">Category</label>
+                <select value={orderCategory} onChange={e=>setOrderCategory(e.target.value)} className="rounded-md bg-[#111727] border border-white/10 px-2 py-1">
+                  <option value="All">All</option>
+                  {categories.map(c=> <option key={c} value={c}>{c}</option>)}
+                </select>
+                <div className="ml-auto text-sm text-white/70">Periods: {Object.keys(ordersByPeriod).length}</div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {Object.entries(ordersByPeriod).slice(0,6).map(([k,v])=> (
+                  <div key={k} className="p-3 border rounded-md">
+                    <div className="text-sm text-white/60">{k}</div>
+                    <div className="font-medium">{v.count} orders</div>
+                    <div className="text-sm text-white/60">${v.total.toFixed(2)}</div>
+                  </div>
+                ))}
+              </div>
               {orders.length===0 ? <div className="text-white/70">No orders yet.</div> : orders.map(o=> (
                 <div key={o.id} className="p-3 border rounded-md flex items-start justify-between">
                   <div>
