@@ -14,7 +14,8 @@ export const products = [
       baseClock: '4.2 GHz',
       boostClock: '5.6 GHz',
       tdp: '95W',
-    }
+    },
+    availability: 'In Stock'
   },
   {
     id: 'gpu-inferno-rtx',
@@ -36,7 +37,8 @@ export const products = [
       cores: '16384 CUDA',
       boostClock: '2.7 GHz',
       tdp: '350W',
-    }
+    },
+    availability: 'Out of Stock'
   },
   {
     id: 'cool-cryoflux-360',
@@ -52,7 +54,8 @@ export const products = [
       radiator: '360mm',
       fans: '3x 120mm PWM',
       noise: '18 dBA',
-    }
+    },
+    availability: 'In Stock'
   },
   {
     id: 'acc-firepower-psu',
@@ -69,7 +72,8 @@ export const products = [
       modular: 'Fully Modular',
       protections: 'OVP/UVP/OPP/SCP',
       wattage: '850W'
-    }
+    },
+    availability: 'In Stock'
   },
   {
     id: 'gpu-glacier-xt',
@@ -85,7 +89,8 @@ export const products = [
       vram: '16GB GDDR6',
       cores: '9216',
       boostClock: '2.4 GHz',
-    }
+    },
+    availability: 'In Stock'
   },
   {
     id: 'cpu-dragonfire-z7',
@@ -102,7 +107,8 @@ export const products = [
       baseClock: '4.0 GHz',
       boostClock: '5.1 GHz',
       tdp: '105W',
-    }
+    },
+    availability: 'In Stock'
   },
   {
     id: 'ram-venom-32gb',
@@ -118,7 +124,8 @@ export const products = [
       capacity: '32GB (2x16)',
       speed: '6000 MT/s',
       type: 'DDR5',
-    }
+    },
+    availability: 'In Stock'
   },
   {
     id: 'ssd-nova-1tb',
@@ -135,7 +142,8 @@ export const products = [
       interface: 'PCIe 4.0 x4',
       read: '7000 MB/s',
       write: '5000 MB/s'
-    }
+    },
+    availability: 'In Stock'
   },
   {
     id: 'mouse-quantum-pro',
@@ -151,7 +159,8 @@ export const products = [
       dpi: '200-16000',
       buttons: '8 programmable',
       connectivity: 'Wired/Wireless'
-    }
+    },
+    availability: 'In Stock'
   },
   {
     id: 'keyboard-arcane-tkl',
@@ -167,7 +176,8 @@ export const products = [
       layout: 'TKL',
       switches: 'Hot-swappable',
       connectivity: 'Wired/Bluetooth'
-    }
+    },
+    availability: 'In Stock'
   },
   {
     id: 'monitor-odyssey-27',
@@ -184,7 +194,8 @@ export const products = [
       refresh: '144Hz',
       panel: 'IPS',
       resolution: '2560x1440'
-    }
+    },
+    availability: 'Out of Stock'
   },
   {
     id: 'case-argon-mid',
@@ -200,7 +211,8 @@ export const products = [
       formFactor: 'ATX',
       fansIncluded: '2x 120mm',
       frontIO: 'USB-C, USB-A'
-    }
+    },
+    availability: 'In Stock'
   },
   {
     id: 'headset-vapor-7',
@@ -216,7 +228,8 @@ export const products = [
       connectivity: 'USB/3.5mm',
       mic: 'Noise-cancelling',
       drivers: '50mm'
-    }
+    },
+    availability: 'In Stock'
   },
   {
     id: 'fan-arctic-120',
@@ -232,7 +245,8 @@ export const products = [
       size: '120mm',
       noise: '18 dBA',
       rpm: '2000 RPM'
-    }
+    },
+    availability: 'In Stock'
   },
   {
     id: 'webcam-clarity-1080p',
@@ -248,7 +262,8 @@ export const products = [
       resolution: '1080p',
       fps: '30',
       mic: 'Built-in stereo'
-    }
+    },
+    availability: 'In Stock'
   }
 ]
 

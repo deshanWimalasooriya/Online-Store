@@ -17,7 +17,7 @@ function Logo() {
 }
 
 export default function Header() {
-  const { count } = useCart()
+  const { count, total } = useCart()
   const [q, setQ] = useState('')
   const navigate = useNavigate()
   const [params] = useSearchParams()
@@ -42,19 +42,16 @@ export default function Header() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
         <div className="flex items-center gap-6">
           <Logo />
-          <nav className="hidden md:flex items-center gap-5 text-sm text-white/80">
+        </div>
+        <div className="flex items-center gap-4 relative">
+          <nav className="hidden md:flex items-center gap-6 text-sm text-white/80">
             <Link className="hover:text-white" to="/">Home</Link>
             <Link className="hover:text-white" to="/products">Products</Link>
             <Link className="hover:text-white" to="/about">About</Link>
             <Link className="hover:text-white" to="/contact">Contact</Link>
             <Link className="hover:text-white" to="/admin">Admin</Link>
           </nav>
-        </div>
-        <form onSubmit={onSearch} className="hidden sm:flex items-center gap-2">
-          <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search tech or power..." className="w-64 rounded-md border border-white/10 bg-[#111727] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ice-500" />
-          <button className="btn-primary">Search</button>
-        </form>
-        <div className="flex items-center gap-4 relative">
+
           <div className="relative">
             <button onClick={toggleNotifications} className="relative p-2 rounded hover:bg-white/5">
               <svg className="h-6 w-6 text-ice-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -90,11 +87,18 @@ export default function Header() {
             )}
           </div>
 
-          <Link to="/cart" className="relative inline-flex">
+          <Link to="/cart" className="relative inline-flex items-center gap-2">
             <svg className="h-7 w-7 text-ice-400" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25h9.75m-12-9h14.036c.64 0 1.108.593.98 1.22l-1.35 6.75a1.125 1.125 0 0 1-1.1.88H7.5m0 0L5.25 6.75m2.25 7.5L4.136 5.272M9 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm9 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/></svg>
             <span className="absolute -right-2 -top-2 rounded-full bg-fire-500 px-2 py-0.5 text-xs font-bold shadow-glowFire">{count}</span>
+            <div className="hidden sm:block text-sm text-white/80">${total.toFixed(2)}</div>
           </Link>
         </div>
+      </div>
+      <div className="hidden sm:flex items-center justify-center px-4 pb-3">
+        <form onSubmit={onSearch} className="flex items-center gap-2 w-full max-w-2xl">
+          <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search tech or power..." className="w-full rounded-md border border-white/10 bg-[#111727] px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ice-500" />
+          <button className="btn-primary">Search</button>
+        </form>
       </div>
       <div className="sm:hidden px-4 pb-3">
         <form onSubmit={onSearch} className="flex items-center gap-2">
