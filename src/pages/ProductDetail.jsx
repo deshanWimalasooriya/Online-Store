@@ -1,7 +1,9 @@
 import { useState } from 'react'
+import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { products } from '../data/products'
 import { useCart } from '../context/CartContext'
+import AddToCartModal from '../components/AddToCartModal'
 
 export default function ProductDetail() {
   const { id } = useParams()
