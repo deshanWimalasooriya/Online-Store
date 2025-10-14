@@ -90,6 +90,18 @@ export default function Checkout() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
       <h1 className="font-display text-2xl">Checkout</h1>
+      {orderPlaced && (
+        <div className="mt-4 p-3 bg-green-800/10 border border-green-500 rounded flex items-center justify-between">
+          <div>
+            <div className="font-medium">Order completed successfully!</div>
+            <div className="text-sm text-white/70">Your order {orderPlaced.id} has been placed.</div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button onClick={downloadBill} className="btn-primary">Download Bill</button>
+            <button onClick={()=>{ setOrderPlaced(null); navigate('/') }} className="pill">Done</button>
+          </div>
+        </div>
+      )}
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <form onSubmit={placeOrder} className="lg:col-span-2 card p-4">
           <h2 className="font-display text-lg">Delivery Address</h2>
