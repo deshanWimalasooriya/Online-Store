@@ -87,9 +87,10 @@ export default function Header() {
             )}
           </div>
 
-          <Link to="/cart" className="relative inline-flex">
+          <Link to="/cart" className="relative inline-flex items-center gap-2">
             <svg className="h-7 w-7 text-ice-400" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25h9.75m-12-9h14.036c.64 0 1.108.593.98 1.22l-1.35 6.75a1.125 1.125 0 0 1-1.1.88H7.5m0 0L5.25 6.75m2.25 7.5L4.136 5.272M9 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm9 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"/></svg>
             <span className="absolute -right-2 -top-2 rounded-full bg-fire-500 px-2 py-0.5 text-xs font-bold shadow-glowFire">{count}</span>
+            <div className="hidden sm:block text-sm text-white/80">${total.toFixed(2)}</div>
           </Link>
         </div>
       </div>
