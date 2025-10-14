@@ -9,6 +9,7 @@ export default function ProductDetail() {
   const { add } = useCart()
   const [qty, setQty] = useState(1)
   const [index, setIndex] = useState(0)
+  const [open, setOpen] = useState(false)
 
   if (!product) return <div className="mx-auto max-w-5xl px-4 py-10">Product not found.</div>
 
@@ -45,8 +46,10 @@ export default function ProductDetail() {
               <button className="px-3 py-2 bg-transparent" onClick={() => setQty(q => q + 1)}>+</button>
             </div>
 
-            <button onClick={() => add(product, qty)} className={isIce ? 'btn-primary' : 'btn-secondary'}>Add to Cart</button>
+            <button onClick={() => setOpen(true)} className={isIce ? 'btn-primary' : 'btn-secondary'}>Add to Cart</button>
           </div>
+
+          <AddToCartModal open={open} onClose={()=>setOpen(false)} product={product} onAdd={(p,qty)=>add(p,qty)} />
 
           <div className="mt-8">
             <h3 className="font-display text-xl">Specifications</h3>
