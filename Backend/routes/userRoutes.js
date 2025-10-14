@@ -1,6 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
+const { authenticateJWT, authorizeAdmin } = require('../middlewares/authMiddleware');
+
+// Use middleware for all routes below
+router.use(authenticateJWT);
+router.use(authorizeAdmin);
 
 router.get('/', userController.getAllUsers);
 router.get('/:id', userController.getUserById);
