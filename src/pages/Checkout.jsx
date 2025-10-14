@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useUser } from '../context/UserContext'
+import { useNotifications } from '../context/NotificationContext'
+import jsPDF from 'jspdf'
 
 export default function Checkout() {
   const { items, total, clear } = useCart()
   const { user } = useUser()
+  const { addNotification } = useNotifications()
   const navigate = useNavigate()
 
   const [delivery, setDelivery] = useState({ name: '', email: '', address: '', city: '', postal: '' })
@@ -13,6 +16,7 @@ export default function Checkout() {
   const [billing, setBilling] = useState({ name: '', email: '', address: '', city: '', postal: '' })
   const [paymentMethod, setPaymentMethod] = useState('card')
   const [card, setCard] = useState({ number: '', expiry: '', cvv: '' })
+  const [orderPlaced, setOrderPlaced] = useState(null)
 
   useEffect(()=>{
     if (user) {
@@ -53,9 +57,34 @@ export default function Checkout() {
       created: new Date().toISOString()
     }
 
-    console.log('Order placed', order)
+    // Show notification and keep the order available for invoice
+    addNotification({ title: 'Order completed successfully!', message: `Order ${order.id} has been placed.`, type: 'success' })
+    setOrderPlaced(order)
     clear()
-    navigate('/')
+  }
+
+  const downloadBill = () => {
+    if (!orderPlaced) return
+    const pdf = new jsPDF({ unit: 'pt', format: 'a4' })
+    pdf.setFontSize(16)
+    pdf.text('Invoice — CircuitChic', 40, 50)
+    pdf.setFontSize(12)
+    pdf.text(`Order ID: ${orderPlaced.id}`, 40, 80)
+    pdf.text(`Date: ${new Date(orderPlaced.created).toLocaleString()}`, 40, 100)
+
+    let y = 140
+    pdf.setFontSize(12)
+    pdf.text('Items:', 40, y)
+    y += 20
+    orderPlaced.items.forEach(it => {
+      pdf.text(`${it.qty} x ${it.name} — $${(it.price).toFixed(2)}`, 60, y)
+      y += 18
+    })
+
+    y += 10
+    pdf.setFontSize(14)
+    pdf.text(`Total: $${(orderPlaced.total).toFixed(2)}`, 40, y)
+    pdf.save(`invoice-${orderPlaced.id}.pdf`)
   }
 
   return (
