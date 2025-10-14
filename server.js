@@ -23,7 +23,11 @@ const server = http.createServer((req, res) => {
   const mime = { '.html':'text/html', '.js':'application/javascript', '.css':'text/css', '.png':'image/png', '.jpg':'image/jpeg', '.svg':'image/svg+xml' }[ext] || 'text/plain'
   if (!filePath.startsWith(publicDir)) { res.writeHead(403); res.end('Forbidden'); return }
   fs.stat(filePath, (err, stat) => {
-    if (err || !stat.isFile()) { res.writeHead(404); res.end('Not found'); return }
+    if (err || !stat.isFile()) {
+      // Fallback to SPA index.html so client-side routes work in preview
+      const indexPath = path.join(publicDir, 'index.html')
+      return sendFile(res, indexPath, 'text/html')
+    }
     sendFile(res, filePath, mime)
   })
 })
