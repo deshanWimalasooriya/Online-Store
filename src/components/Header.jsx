@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useNotifications } from '../context/NotificationContext'
+import { useUser } from '../context/UserContext'
 
 function Logo() {
   return (
@@ -24,6 +25,9 @@ export default function Header() {
 
   const { notifications, unreadCount, clearUnread, removeNotification } = useNotifications()
   const [open, setOpen] = useState(false)
+
+  const { user, logout, isAdmin } = useUser()
+  const [profileOpen, setProfileOpen] = useState(false)
 
   useEffect(()=>{ setQ(params.get('q') || '') },[params])
 
@@ -49,7 +53,7 @@ export default function Header() {
             <Link className="hover:text-white" to="/products">Products</Link>
             <Link className="hover:text-white" to="/about">About</Link>
             <Link className="hover:text-white" to="/contact">Contact</Link>
-            <Link className="hover:text-white" to="/admin">Admin</Link>
+            {isAdmin() && <Link className="hover:text-white" to="/admin">Admin</Link>}
           </nav>
 
           <div className="relative">
@@ -92,6 +96,36 @@ export default function Header() {
             <span className="absolute -right-2 -top-2 rounded-full bg-fire-500 px-2 py-0.5 text-xs font-bold shadow-glowFire">{count}</span>
             <div className="hidden sm:block text-sm text-white/80">${total.toFixed(2)}</div>
           </Link>
+
+          {/* profile area */}
+          <div className="relative">
+            {user ? (
+              <button onClick={()=>setProfileOpen(v=>!v)} className="flex items-center gap-2 p-1 rounded hover:bg-white/3">
+                {user.profilePicture ? (
+                  <img src={user.profilePicture} alt="avatar" className="w-8 h-8 rounded-full object-cover" />
+                ) : (
+                  <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-sm">{(user.name||user.email||'U').slice(0,1).toUpperCase()}</div>
+                )}
+              </button>
+            ) : (
+              <Link to="/auth" className="pill">Sign in</Link>
+            )}
+
+            {profileOpen && user && (
+              <div className="absolute right-0 mt-2 w-48 bg-[#061221] border border-white/5 rounded shadow-lg z-50">
+                <div className="p-3 border-b border-white/5">
+                  <div className="font-medium">{user.name || user.email}</div>
+                  <div className="text-xs text-white/60">{user.email}</div>
+                </div>
+                <div className="p-2">
+                  <Link to="/profile" className="block px-2 py-2 rounded hover:bg-white/2">Profile</Link>
+                  <Link to="/profile" className="block px-2 py-2 rounded hover:bg-white/2">Orders</Link>
+                  {isAdmin() && <Link to="/admin" className="block px-2 py-2 rounded hover:bg-white/2">Admin</Link>}
+                  <button onClick={()=>{ logout(); setProfileOpen(false) }} className="w-full text-left px-2 py-2 rounded hover:bg-white/2">Sign out</button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <div className="hidden sm:flex items-center justify-center px-4 pb-3">

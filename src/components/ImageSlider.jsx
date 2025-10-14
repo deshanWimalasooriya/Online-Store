@@ -25,7 +25,7 @@ export default function ImageSlider({ images = [], interval = 5000 }) {
 
   return (
     <div className="relative w-full overflow-hidden rounded-xl">
-      <div className="relative h-64 sm:h-80 md:h-96">
+      <div className="relative h-80 sm:h-96 md:h-[520px]">
         {images.map((src, i) => (
           <img
             key={i}
