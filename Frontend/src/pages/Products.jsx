@@ -16,6 +16,7 @@ export default function Products() {
     })
   }, [q, category])
 
+  // Update URL param and state on category change
   const setCat = (c) => {
     setCategory(c)
     const next = new URLSearchParams(params)
