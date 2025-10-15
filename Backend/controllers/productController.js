@@ -61,3 +61,21 @@ exports.deleteProduct = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+exports.getHotDeals = async (req, res) => {
+  try {
+    const hotDeals = await productModel.getTopRatedProducts(4);
+    res.json(hotDeals);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getNewTech = async (req, res) => {
+  try {
+    const newTech = await productModel.getRecentProducts(4);
+    res.json(newTech);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

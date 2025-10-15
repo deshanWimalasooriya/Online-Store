@@ -1,13 +1,27 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
 import { products } from '../data/products'
 import ImageSlider from '../components/ImageSlider'
 
 export default function Home() {
+
+  // Category state
   const [selectedCategory, setSelectedCategory] = useState('All')
-  const hotDeals = products.filter(p=>p.theme==='fire').slice(0,4)
-  const newTech = products.filter(p=>p.theme==='ice').slice(0,4)
+  const [categories, setCategories] = useState(['All']);
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/categories');
+        const data = await response.json();
+        setCategories(['All', ...data.map(c => c.category)]);
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const sliderImages = [
     'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1600&q=60', // motherboard closeup
@@ -15,7 +29,6 @@ export default function Home() {
     'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1600&q=60' // server racks
   ]
 
-  const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))]
   const filteredProducts = selectedCategory === 'All' ? products : products.filter(p => p.category === selectedCategory)
 
   // Feature filters state
@@ -61,6 +74,38 @@ export default function Home() {
   }
 
   const visibleProducts = applyFeatureFilters(filteredProducts)
+
+  const [hotDeals, setHotDeals] = useState([]);
+  const [newTech, setNewTech] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        // Fetch Hot Deals (top rated)
+        const hotDealsResponse = await fetch('http://localhost:5000/api/products/hot-deals');
+        const hotDealsData = await hotDealsResponse.json();
+        setHotDeals(Array.isArray(hotDealsData) ? hotDealsData : []);
+
+        // Fetch New Tech (recently added)
+        const newTechResponse = await fetch('http://localhost:5000/api/products/new-tech');
+        const newTechData = await newTechResponse.json();
+        setNewTech(Array.isArray(newTechData) ? newTechData : []);
+
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+
+  console.log('Hot Deals:', hotDeals);
+  console.log('New Tech:', newTech);
 
   return (
     <div>
@@ -112,14 +157,14 @@ export default function Home() {
                   <section>
                     <h2 className="font-display text-2xl">Hot Deals</h2>
                     <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {hotDeals.map(p=> <ProductCard key={p.id} product={p} />)}
+                      {hotDeals.map(product=> <ProductCard key={product.id} product={product} />)}
                     </div>
                   </section>
 
                   <section className="mt-10">
                     <h2 className="font-display text-2xl">New Tech</h2>
                     <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {newTech.map(p=> <ProductCard key={p.id} product={p} />)}
+                      {newTech.map(product=> <ProductCard key={product.id} product={product} />)}
                     </div>
                   </section>
                 </div>
