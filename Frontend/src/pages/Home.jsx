@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import ProductCard from '../components/ProductCard'
-import { products } from '../data/products'
 import ImageSlider from '../components/ImageSlider'
 
 export default function Home() {
@@ -21,6 +20,46 @@ export default function Home() {
     };
 
     fetchCategories();
+  }, []);
+
+  //Fetch products for Hot Deals and New Tech sections
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        // Fetch Hot Deals (top rated)
+        const hotDealsResponse = await fetch('http://localhost:5000/api/products/hot-deals');
+        const hotDealsData = await hotDealsResponse.json();
+        setHotDeals(Array.isArray(hotDealsData) ? hotDealsData : []);
+
+        // Fetch New Tech (recently added)
+        const newTechResponse = await fetch('http://localhost:5000/api/products/new-tech');
+        const newTechData = await newTechResponse.json();
+        setNewTech(Array.isArray(newTechData) ? newTechData : []);
+
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  //Fetch all products for category filtering
+  const [products, setProducts] = useState([]);
+  useEffect(() => {
+    const fetchAllProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/products');
+        const data = await response.json();
+        setProducts(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Failed to fetch products:', error);
+      }
+    };
+
+    fetchAllProducts();
   }, []);
 
   const sliderImages = [
@@ -79,28 +118,7 @@ export default function Home() {
   const [newTech, setNewTech] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        // Fetch Hot Deals (top rated)
-        const hotDealsResponse = await fetch('http://localhost:5000/api/products/hot-deals');
-        const hotDealsData = await hotDealsResponse.json();
-        setHotDeals(Array.isArray(hotDealsData) ? hotDealsData : []);
 
-        // Fetch New Tech (recently added)
-        const newTechResponse = await fetch('http://localhost:5000/api/products/new-tech');
-        const newTechData = await newTechResponse.json();
-        setNewTech(Array.isArray(newTechData) ? newTechData : []);
-
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching products:', error);
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
 
   if (loading) return <div>Loading...</div>;
 
@@ -157,14 +175,14 @@ export default function Home() {
                   <section>
                     <h2 className="font-display text-2xl">Hot Deals</h2>
                     <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {hotDeals.map(product=> <ProductCard key={product.id} product={product} />)}
+                      {hotDeals.map(p=> <ProductCard key={p.id} product={p} />)}
                     </div>
                   </section>
 
                   <section className="mt-10">
                     <h2 className="font-display text-2xl">New Tech</h2>
                     <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {newTech.map(product=> <ProductCard key={product.id} product={product} />)}
+                      {newTech.map(p=> <ProductCard key={p.id} product={p} />)}
                     </div>
                   </section>
                 </div>
